@@ -89,8 +89,8 @@ Using the Pre-Built Collection:
 If you prefer not to execute the tree-building phase and want to use a pre-built collection of cube states, follow these steps:
 1. After creating the cube_tree collection, click on the collection tab.
 2. Hit the green plus button at the top left corner. 
-3. Click  'Import JSON or CSV file' option.
-4. Nevigate to the pre-built collection the located inside the zip file in repo as:  pocket_cube_db.cube_tree.json 
+3. Click 'Import JSON or CSV file' option.
+4. Nevigate to the pre-built collection that located inside the zip file in repo as:  pocket_cube_db.cube_tree.json 
 5. Once the import is complete, you can create the tree_built.flag file inside program's folder for skipping the building phase.
 6. You're all set up!
 
