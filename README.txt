@@ -22,7 +22,7 @@ Files Description:
 
 
 Installation:
-Clone the repository: git clone https://github.com/yourusername/pocket-cube-solver.git
+Clone the repository: git clone https://github.com/galvaknin10/pocket-cube-solver.git
 
 
 Usage:
