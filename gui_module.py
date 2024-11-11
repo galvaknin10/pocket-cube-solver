@@ -338,11 +338,3 @@ class PocketCubeGUI:
         messagebox.showinfo("Notice", "The cube will be reset to the solved state.")
         self.restart()
 
-
-# Main execution
-if __name__ == "__main__":
-    solved_cube = Pocket_Cube()
-    root = tk.Tk()
-    pocket_cube_gui = PocketCubeGUI(root)
-    root.mainloop()
-
