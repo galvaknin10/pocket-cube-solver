@@ -15,6 +15,9 @@ Contains the implementation of the Pocket Cube class, with methods for manipulat
 solve_cube.py
 Contains the logic for solving the Pocket Cube. It uses the pre-built state database to find the optimal solution to any given cube configuration.
 
+gui_module.py
+Responsible for setting up the graphical user interface (GUI) for the Pocket Cube solver project using Tkinter. It creates a window that displays a 3D simulation of the Pocket Cube along with interactive buttons for shuffling the cube, manually entering a specific state, and accurate steps for solving the cube.
+
 tree_data.zip
 A compressed archive containing the preprocessed tree data in a ready-to-use format. Unzip this file to avoid building the tree from scratch.
 
