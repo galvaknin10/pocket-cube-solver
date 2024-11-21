@@ -16,6 +16,9 @@ Contains the logic for solving the Pocket Cube. It uses the pre-built state data
 A compressed archive containing the preprocessed tree data in a JSON format. 
 The JSON contains an array of cube state documents. unzip this file to avoid building the tree from scratch.
 
+& gui_module.py
+Responsible for setting up the graphical user interface (GUI) for the Pocket Cube solver project using Tkinter. It creates a window that displays a 3D simulation of the Pocket Cube along with interactive buttons for shuffling the cube, manually entering a specific state, and accurate steps for solving the cube.
+
 & README.txt
 This file, which provides an overview and instructions for using the Pocket Cube solver.
 
