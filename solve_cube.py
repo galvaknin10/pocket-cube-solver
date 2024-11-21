@@ -1,55 +1,53 @@
 def solve_user_cube(user_cube, solved_state, lookup_dict):
     """
-    Find the solution path from the user's current cube state to the solved state by backtracking 
-    through the recorded states and actions in the database.
+    Finds the solution path from the user's current cube state to the solved state
+    by backtracking through recorded states and actions in a preprocessed dictionary.
 
     Parameters:
-    - user_cube: The current cube object.
-    - solved_state: string representation of the solved state.
-    - lookup_dict: The preprocessed dictionary with cube states as keys.
+        user_cube: The current cube object.
+        solved_state (str): String representation of the solved cube state.
+        lookup_dict (dict): Preprocessed dictionary containing cube states as keys.
+                            Each key maps to a dictionary with 'state', 'action', and 'parent'.
 
     Returns:
-    - solution_path: A list of tuples, where each tuple contains the state and the action taken to reach it.
-    
-    Raises:
-    - ValueError: If an invalid state is found or if backtracking fails.
+        list: A solution path as a list of tuples, where each tuple contains:
+              - The cube state (str) at a given step.
+              - The action (str) taken to reach that state.
     """
+    solution_path = []  # Initialize the solution path
+    possible_rotations = user_cube.normalize_cube_by_symmetry()  # Generate all symmetrical cube states
+    dictionary = None  # Initialize variable to hold the matching dictionary entry
 
-    solution_path = []
-    possible_rotations = user_cube.normalize_cube_by_symmetry()
-    dictionary = None  # Initialize dictionary as None outside the loop
-
-    # Search for the matching rotation in the lookup dictionary
+    # Search for a matching normalized state in the lookup dictionary
     for rotation in possible_rotations:
         if rotation in lookup_dict:
-            dictionary = lookup_dict[rotation]  # Found the matching state dictionary
+            dictionary = lookup_dict[rotation]  # Found the matching state
             break
 
-    # If no match is found, return a message and end function
+    # If no matching state is found, notify the user and exit
     if dictionary is None:
-        print("Sorry", "Invalid cube state, no solution found\nTry again...")
-        return 
+        return
 
-    user_cube = dictionary.get('state') # Assigned current cube state
-
-    # Backtrack from the current user state to the solved state using the recorded parent states and actions
+    # Start backtracking from the current user state to the solved state
+    user_cube = dictionary.get('state')  # Set the current state to the found match
     while user_cube != solved_state:
+        # Retrieve the action and parent state for the current state
         action = dictionary.get('action')
         curr_parent = dictionary.get('parent')
 
-        # Add the current state and the action to the solution path
+        # Add the current state and action to the solution path
         solution_path.append((user_cube, action))
 
         # Move to the parent state for the next iteration
         user_cube = curr_parent
-        
-        # Find the dictionary for the parent state using the lookup dictionary
+
+        # Find the dictionary entry for the parent state
         if user_cube in lookup_dict:
             dictionary = lookup_dict[user_cube]
         else:
-            raise ValueError(f"Backtracking failed: Parent state for {user_cube} not found in the database.")
+            return
 
-    # Append the solved state with a success message
+    # Add the solved state with a success message
     solution_path.append((solved_state, 'Congratulations!'))
 
     return solution_path

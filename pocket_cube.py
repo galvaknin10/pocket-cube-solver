@@ -16,7 +16,6 @@ class Pocket_Cube:
         self.faces = {face: [[color] * 2 for i in range(2)] for face, color in cube_format.items()}
 
 
-
     def action_1(self):
         """
         Rotate the top layer (x-axis). (clockwise)
@@ -139,114 +138,120 @@ class Pocket_Cube:
         self.faces['R'] = [[self.faces['R'][1][0], self.faces['R'][0][0]], [self.faces['R'][1][1], self.faces['R'][0][1]]]
     
 
-    def display_cube(self):
-        """
-        Display the current state of the cube in a readable format.
-        Prints each face of the cube and its colors row by row.
-        """
-        for face, grid in self.faces.items():
-            print(f'{face}:')  # Display the face label('U', 'D', 'F', etc)
-            for row in grid:
-                # Print each color in the current row
-                for color in row:
-                    print(color, end=' ')
-                print('\n')  # Move to the next line after printing a row
-            print('\n')  # Separate each face visually with a newline
-
-
     def copy(self):
         """
-        Create a copy of the current cube state.
-        The new cube will have the same face configuration as the original cube.
+        Creates a deep copy of the current cube state.
+
+        This method generates a new instance of the Pocket_Cube class with the same
+        face configuration as the original cube. It ensures that modifications to the
+        new cube do not affect the original cube's state.
+
+        Returns:
+            Pocket_Cube: A new cube instance with an identical configuration to the original.
         """
-        new_cube = Pocket_Cube()  # Create a new instance of Pocket_Cube
-        # Copy each face grid without modifying the original cube's face
-        new_cube.faces = {face: [row[:] for row in grid] for face, grid in self.faces.items()}
-        return new_cube  # Return the new cube instance
+        # Create a new instance of Pocket_Cube
+        new_cube = Pocket_Cube()
+
+        # Deep copy each face grid to ensure the original is not modified
+        new_cube.faces = {
+            face: [row[:] for row in grid]  # Copy each row in the grid
+            for face, grid in self.faces.items()
+        }
+
+        # Return the new cube instance
+        return new_cube
 
 
     def hash_rep(self):
         """
-        Create a unique hash representation of the cube's current state.
-        This can be used for comparing different cube states.
+        Generates a unique hash representation of the cube's current state.
+
+        This method flattens the cube's face grids into a single string, where
+        each character represents the color of a sticker. The resulting hash
+        is useful for comparing cube states or storing them in data structures
+        like sets or dictionaries.
+
+        Returns:
+            str: A string representing the hash of the cube's current state.
         """
         result = ''  # Initialize an empty string to store the hash representation
-        curr_face = ''  # Store the colors of each face
-        # Iterate through the faces and their grids
-        for grid in self.faces.values():
-            # Flatten each row into a string and add it to the hash
-            for row in grid:
-                curr_face += ''.join(row)
-            result += curr_face  # Add the face's colors to the final result
-            curr_face = ''  # Reset for the next face
-        return result  # Return the final hash representation
-    
 
+        # Iterate through each face's grid
+        for grid in self.faces.values():
+            # Flatten each row and concatenate into the result
+            for row in grid:
+                result += ''.join(row)
+
+        # Return the final hash representation
+        return result
+
+    
     def normalize_cube_by_symmetry(self):
         """
-        Normalize the cube state by applying rotations and finding all possible representation
-        based on the symmetry. The function rotates the cube in all 24 possible ways to generate all
-        symmetrical cube states and return them as a list.
+        Generate all 24 symmetrical representations of the cube by applying rotations.
+
+        The cube is rotated in all possible orientations to account for its full symmetry.
+        For each orientation, a unique hash representation of the cube's state is generated.
+        This is useful for normalizing cube states, comparing states, or generating
+        symmetrical solutions.
+
+        Returns:
+            list: A list containing hash representations of the cube for all 24 symmetrical states.
         """
-        possible_rotations = []  # Store all possible cube rotations (hash representations)
-        counter = 1  # Counter to keep track of the number of rotation sets
-        
-        while counter < 7:  # Loop through 6 sets of actions (in each set the up-face is other color)
+        possible_rotations = []  # Store all hash representations of cube states
+        counter = 1  # Track the rotation sets (one for each face in the "up" position)
 
-            for _ in range(4):  # Apply 4 rotations (clockwise) for each axis rotation
-                self.action_1()  # Perform action 1 (rotation along x-axis)
-                self.action_2()  # Perform action 2 (rotation along x-axis)
-                possible_rotations.append(self.hash_rep())  # Save the current state’s hash representation
+        # Generate symmetrical states by iterating through rotation sets
+        while counter <= 6:  # There are 6 unique sets based on the face in the "up" position
+            for _ in range(4):  # Rotate the cube 4 times (clockwise) for each set
+                self.action_1()  # Rotate along the x-axis
+                self.action_2()  # Apply further rotation along the x-axis
+                possible_rotations.append(self.hash_rep())  # Store the hash of the current state
 
-            counter += 1  # Move to the next rotation set
-            
+            counter += 1  # Move to the next set of rotations
+
             if counter <= 4:
-                # Apply action 3 and 4 for rotations around the z-axis
-                self.action_3()  # Rotate around z-axis
-                self.action_4()  # Rotate around z-axis
-
+                # Rotate the cube around the z-axis for sets 1-4
+                self.action_3()  # Rotate around the z-axis
+                self.action_4()  # Further rotate around the z-axis
             elif counter == 5:
-                # Apply action 5 and 6 for rotations around the y-axis
-                self.action_5()  # Rotate around y-axis
-                self.action_6()  # Rotate around y-axis
-
+                # Rotate the cube around the y-axis for set 5
+                self.action_5()  # Rotate around the y-axis
+                self.action_6()  # Further rotate around the y-axis
             elif counter == 6:
-                # Apply two more y-axis rotations to complete the symmetry set
-                self.action_5()  # Rotate around y-axis
-                self.action_6()  # Rotate around y-axis
-                self.action_5()  # Rotate again around y-axis
-                self.action_6()  # Rotate again around y-axis
-        
-        return possible_rotations # Return all 24 possible states of the cube
+                # Complete the symmetry with additional y-axis rotations
+                self.action_5()  # Rotate around the y-axis
+                self.action_6()  # Further rotate around the y-axis
+                self.action_5()  # Rotate again around the y-axis
+                self.action_6()  # Rotate again around the y-axis
+
+        return possible_rotations  # Return all 24 symmetrical states of the cube
 
 
     def update_faces_by_symmetry(self, state):
         """
-        Update the cube's faces based on the provided state string.
-        The state string is split into rows of faces, and each face is updated accordingly.
-        
-        :param state: A string representing the current state of the cube's faces.
+        Updates the cube's faces based on a provided state string.
+
+        The state string represents the cube's configuration in a linear format, where each
+        pair of characters corresponds to a single row on a face. This method parses the state
+        string, splits it into rows, and updates each face of the cube accordingly.
+
+        Args:
+            state (str): A string representing the current state of the cube's faces.
+                         The string length must be divisible into 2-character rows for each face.
         """
-        # Convert the state string into rows, each representing 2 face elements
+        # Convert the state string into rows, each representing 2 elements of a face
         faces_by_rows = [state[i:i + 2] for i in range(0, len(state), 2)]
-        j = 0  # Initialize counter to loop through faces
-        
+
+        # Initialize a counter to track which rows belong to which face
+        j = 0
+
+        # Iterate through the cube's faces and update them
         for key in self.faces:
-            # Update each face of the cube using the rows from the state string
+            # Assign two rows from the state string to the current face
             self.faces[key] = [faces_by_rows[j], faces_by_rows[j + 1]]
-            j += 2  # Move to the next set of rows for the next face
+            j += 2  # Advance to the next set of rows for the next face
 
-
-    def shuffle(self, steps=20):
-        """
-        Shuffle the cube by applying random moves a specified number of times.
-        By default, it will perform 20 random moves.
-        """
-        for _ in range(steps):
-            # Choose a random action from the list of cube manipulations(action_1 to action_6).
-            action = random.choice([self.action_1, self.action_2, self.action_3, self.action_4, self.action_5, self.action_6])
-            action()  # Apply the chosen random action.
-        
 
     def which_action(self, action_num):
         """
