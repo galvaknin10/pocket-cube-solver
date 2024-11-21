@@ -42,7 +42,7 @@ Linux: Install via your package manager, e.g., sudo apt-get install python3-tk.
 MacOS/Windows: Ensure you have the full Python installation, as tkinter is included by default.
 
 # Installation Instructions:
-1. Clone the repository (git clone https://github.com/gal10/pocket-cube-solver.git).
+1. Clone the repository (git clone https://github.com/galvaknin10/pocket-cube-solver).
 2. Unzip the tree_data.zip file in the project root to extract the preprocessed data.
 3. Install the Package Locally: From the root directory of the project, run:
 pip install . (include the `.`).
