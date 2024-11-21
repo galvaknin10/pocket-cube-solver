@@ -4,6 +4,7 @@ setup(
     name="pocket-cube-solver",  # Package name
     version="1.0.0",           # Initial version
     author="Gal Vaknin",
+    py_modules=['main', 'gui_module', 'pocket_cube', 'solve_cube'],  # Replace with your main module name
     author_email="gal9846@gmail.com",  # Replace with your email
     description="A solver for the Pocket Cube using precomputed state trees.",
     long_description=open("README.txt").read(),  # Use README content for PyPI or help info
