@@ -1,6 +1,11 @@
 # Pocket Cube Solver
 This repository provides a complete solution for solving the Pocket Cube using a pre-built database of cube states and a Breadth-First Search (BFS) algorithm to find the shortest solution path.
 
+## Demo Video
+[![Watch the video](https://img.youtube.com/vi/RHneEkWI5UE/hqdefault.jpg)](https://www.youtube.com/watch?v=<VIDEO_ID>)
+
+Check out the full walkthrough of the project on YouTube!
+
 # File Overview:
 - main.py
 The entry point for the application. Users can run this file via the command python -m main to interact with the Pocket Cube solver in the console.
