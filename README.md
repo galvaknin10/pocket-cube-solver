@@ -6,7 +6,7 @@ This repository provides a complete solution for solving the Pocket Cube using a
 
 Check out the full walkthrough of the project on YouTube!
 
-# File Overview:
+# File Overview
 - main.py
 The entry point for the application. Users can run this file via the command python -m main to interact with the Pocket Cube solver in the console.
 
@@ -21,7 +21,7 @@ A compressed archive containing the preprocessed tree data in a JSON format.
 The JSON contains an array of cube state documents. unzip this file to avoid building the tree from scratch.
 
 - gui_module.py
-Responsible for setting up the graphical user interface (GUI) for the Pocket Cube solver project using Tkinter. It creates a window that displays a 3D simulation of the Pocket Cube along with interactive buttons for shuffling the cube, manually entering a specific state, and accurate steps for solving the cube.
+Responsible for setting up the graphical user interface (GUI) for the Pocket Cube solver project using Tkinter. It creates a window that displays a 3D simulation of the Pocket Cube along with interactive buttons for manually entering a specific state, and accurate steps for solving the cube.
 
 - README.txt
 This file, which provides an overview and instructions for using the Pocket Cube solver.
@@ -35,7 +35,7 @@ Additionally, Stores the tree dynamically as documents for efficient updates and
 
 - serialize_json.py: Converts the exported JSON file from MongoDB and save it as pkl file that holds a dictionary structure of the documents for optimized fast lookups during solving.
 
-# Dependencies:
+# Dependencies
 Before running the application, ensure you have the following libraries installed. If not, install them using pip.
 * pymongo: Required for connecting to MongoDB. Install with: pip install pymongo
 
@@ -45,21 +45,21 @@ Before running the application, ensure you have the following libraries installe
 Linux: Install via your package manager, e.g., sudo apt-get install python3-tk.
 MacOS/Windows: Ensure you have the full Python installation, as tkinter is included by default.
 
-# Installation Instructions:
+# Installation Instructions
 1. Clone the repository (git clone https://github.com/galvaknin10/pocket-cube-solver).
 2. Unzip the tree_data.zip file in the project root to extract the preprocessed data.
 3. Install the Package Locally: From the root directory of the project, run: pip install . (include the `.`).                                                                             
 4. Run the Solver: After installation, run the solver using the CLI command: pocket-cube-solver
 * Uninstall the Package (if needed): pip uninstall pocket-cube-solver.
 
-# For building the tree (optional):
+# For building the tree (optional)
 * If you don't already have MongoDB, install it first. You can find instructions on MongoDB's official site. 
 1. Validate parameters of connect_to_mongo function inside built_tree.py and start the building processes (this might take 2.5 hours).
 2. When building completed, export data to JSON format.
 3. Convert the JSON file into a and save it as a dictionary with serialize_json.py, where the keys represent the unique states of the cube.
 4. Follow installation instructions starting from step 3.
 
-# Algorithm and Time Complexity:
+# Algorithm and Time Complexity
 - BFS Algorithm:
 The solver uses a Breadth-First Search (BFS) algorithm to find the shortest path to solve the Pocket Cube. During the BFS tree-building phase, all unique reachable cube states are explored and stored in a MongoDB database for fast retrieval.
 
