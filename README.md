@@ -56,7 +56,7 @@ MacOS/Windows: Ensure you have the full Python installation, as tkinter is inclu
 * If you don't already have MongoDB, install it first. You can find instructions on MongoDB's official site. 
 1. Validate parameters of connect_to_mongo function inside built_tree.py and start the building processes (this might take 2.5 hours).
 2. When building completed, export data to JSON format.
-3. Convert the JSON file into a and save it as a dictionary with serialize_json.py, where the keys represent the unique states of the cube.
+3. Convert the JSON file into a pkl and save it as a dictionary with serialize_json.py, where the keys represent the unique states of the cube.
 4. Follow installation instructions starting from step 3.
 
 # Algorithm and Time Complexity
