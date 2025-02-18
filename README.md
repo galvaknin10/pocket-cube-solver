@@ -2,7 +2,7 @@
 This repository provides a complete solution for solving the Pocket Cube using a pre-built database of cube states and a Breadth-First Search (BFS) algorithm to find the shortest solution path.
 
 ## Demo Video
-[![Watch the video](https://img.youtube.com/vi/RHneEkWI5UE/hqdefault.jpg)](https://www.youtube.com/watch?v=btGJBfaDMGQ)
+[![Watch the video](https://img.youtube.com/vi/btGJBfaDMGQ/hqdefault.jpg)](https://www.youtube.com/watch?v=btGJBfaDMGQ)
 
 Check out the full walkthrough of the project on YouTube!
 
