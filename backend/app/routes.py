@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from backend.app.load_data import TREE_DATA
+from backend.app.solve import solve_cube
 
 router = APIRouter()
 
 @router.get("/solve/{state}")
-def solve_cube(state: str):
-    """Retrieves the solution for a given cube state."""
-    return TREE_DATA.get(state, {"error": "State not found"})
+def solve(state: str):
+    """Solves the Pocket Cube from the given state."""
+    return solve_cube(state)
