@@ -1,19 +1,22 @@
 version: '3.8'
 
 services:
-  data-service:
-    build: ./database
-    container_name: data_service
-    volumes:
-      - ./database/data:/data
-
   backend:
     build: ./backend
     container_name: backend_service
-    restart: always
-    depends_on:
-      - data-service
     ports:
       - "8000:8000"
     volumes:
-      - ./database/data:/data
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build: ./frontend
+    container_name: frontend_service
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
