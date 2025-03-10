@@ -2,21 +2,29 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
-    container_name: backend_service
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./backend:/app
     environment:
-      - PYTHONUNBUFFERED=1
+      - UVICORN_CMD=uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: ["sh", "-c", "$$UVICORN_CMD"]
+    restart: unless-stopped
 
   frontend:
-    build: ./frontend
-    container_name: frontend_service
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
       - ./frontend:/app
+      - /app/build
+    environment:
+      - NODE_ENV=production
     depends_on:
       - backend
+    restart: unless-stopped

@@ -1,5 +1,5 @@
-from backend.app.load_data import TREE_DATA
-from pocket_cube import Pocket_Cube
+from app.load_data import TREE_DATA
+from app.pocket_cube import Pocket_Cube
 
 def solve_cube(initial_state: str):
     """Finds the solution path by backtracking from the given state."""

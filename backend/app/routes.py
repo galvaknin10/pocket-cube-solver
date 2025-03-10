@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.app.solve import solve_cube
+from app.solve import solve_cube
 
 router = APIRouter()
 
@@ -7,3 +7,5 @@ router = APIRouter()
 def solve(state: str):
     """Solves the Pocket Cube from the given state."""
     return solve_cube(state)
+
+

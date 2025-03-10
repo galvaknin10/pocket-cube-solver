@@ -1,5 +1,5 @@
 import React from "react";
-import PocketCube from "./PocketCube";
+import PocketCube from './PocketCube';
 
 function App() {
   return (
