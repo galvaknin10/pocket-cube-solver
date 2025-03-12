@@ -1,0 +1,46 @@
+.cube-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-color: #f4f4f4;
+  }
+  
+  .cube {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    transform-style: preserve-3d;
+    cursor: grab; /* Indicate draggable object */
+    transition: transform 0.05s linear;
+  }
+  
+  
+  .face {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border: 3px solid black;
+    opacity: 1.0;
+    display: flex;
+    flex-wrap: wrap;
+    transition: transform 0.2s ease-in-out; /* Enables smooth rotation */
+    transform-origin: center;
+  }
+  
+  
+  /* Adjusting face positioning to match the new size */
+  .up    { transform: rotateX(90deg) translateZ(90px); }
+  .down  { transform: rotateX(-90deg) translateZ(90px); }
+  .front { transform: translateZ(90px); }
+  .back  { transform: rotateY(180deg) translateZ(90px); }
+  .left  { transform: rotateY(-90deg) translateZ(90px); }
+  .right { transform: rotateY(90deg) translateZ(90px); }
+  
+  /* Adjusted cubie size for a perfect fit */
+  .cubie {
+    width: 86px;
+    height: 86px;
+    border: 3px solid black;
+  }
+  
