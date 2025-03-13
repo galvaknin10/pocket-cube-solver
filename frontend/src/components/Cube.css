@@ -2,45 +2,38 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    height: 100vh;
     background-color: #f4f4f4;
-  }
-  
-  .cube {
+    perspective: 1200px;
+}
+
+.cube {
     position: relative;
-    width: 180px;
-    height: 180px;
+    width: 150px;
+    height: 150px;
     transform-style: preserve-3d;
-    cursor: grab; /* Indicate draggable object */
-    transition: transform 0.05s linear;
-  }
-  
-  
-  .face {
+    transform-origin: center center;
+}
+
+.cubie {
     position: absolute;
-    width: 180px;
-    height: 180px;
-    border: 3px solid black;
-    opacity: 1.0;
+    width: 44px;
+    height: 44px;
     display: flex;
-    flex-wrap: wrap;
-    transition: transform 0.2s ease-in-out; /* Enables smooth rotation */
-    transform-origin: center;
-  }
-  
-  
-  /* Adjusting face positioning to match the new size */
-  .up    { transform: rotateX(90deg) translateZ(90px); }
-  .down  { transform: rotateX(-90deg) translateZ(90px); }
-  .front { transform: translateZ(90px); }
-  .back  { transform: rotateY(180deg) translateZ(90px); }
-  .left  { transform: rotateY(-90deg) translateZ(90px); }
-  .right { transform: rotateY(90deg) translateZ(90px); }
-  
-  /* Adjusted cubie size for a perfect fit */
-  .cubie {
-    width: 86px;
-    height: 86px;
-    border: 3px solid black;
-  }
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease-in-out; /* ✅ Ensures smooth rotation */
+}
+
+.cubie-face {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    opacity: 0.95;
+}
+
+
+
   
