@@ -2,18 +2,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-    perspective: 1200px;
-}
+    height: 80vh; /* Full screen height */
+    background-color: #f4f4f4; /* Light background */
+    perspective: 800px; /* Adds depth to the 3D effect */
+  }
 
-.cube {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    transform-style: preserve-3d;
-    transform-origin: center center;
-}
+  .cube {
+    position: absolute; /* Ensures the cube stays within the container */
+    width: 100px; /* Define a fixed width */
+    height: 100px; /* Define a fixed height */
+    transform-style: preserve-3d; /* Ensures cubies are rendered in 3D */
+    transform-origin: center center; /* Rotate around the center of the cube */
+    transition: transform 0.3s ease-out; /* Smooth transition for rotation */
+  }
+  
 
 .cubie {
     position: absolute;
@@ -26,13 +28,6 @@
     transition: transform 0.3s ease-in-out; /* ✅ Ensures smooth rotation */
 }
 
-.cubie-face {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border: 2px solid black;
-    opacity: 0.95;
-}
 
 
 

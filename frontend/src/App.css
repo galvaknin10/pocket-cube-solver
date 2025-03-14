@@ -3,17 +3,15 @@ body {
   text-align: center;
   background-color: #f4f4f4;
   margin: 0;
-  padding: 0;
+  overflow: hidden; /* Prevents both horizontal and vertical scrolling */
 }
 
-.App {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
 
 h1 {
-  margin-bottom: 20px;
+  font-size: 2.5rem; /* Larger and more prominent */
+  font-weight: bold;
+  text-transform: uppercase; /* Makes it look sleek */
+  letter-spacing: 2px; /* Adds a modern touch */
+  margin-bottom: 15px;
+  color: #333; /* Dark gray for a cleaner look */
 }
