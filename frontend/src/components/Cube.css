@@ -29,6 +29,38 @@
 }
 
 
-
+.rotation-arrow {
+    position: absolute;
+    font-size: 2rem;
+    font-weight: bold;
+    color: red;
+    animation: pulse 1s infinite alternate;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.3); opacity: 1; }
+  }
+  
+  /* Position arrows over each face */
+  .face-U .rotation-arrow { top: 20px; left: 50%; transform: translateX(-50%); }
+  .face-D .rotation-arrow { bottom: 20px; left: 50%; transform: translateX(-50%); }
+  .face-F .rotation-arrow { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .face-B .rotation-arrow { top: 50%; right: 20px; transform: translateY(-50%); }
+  .face-L .rotation-arrow { top: 50%; left: 20px; transform: translateY(-50%); }
+  .face-R .rotation-arrow { top: 50%; right: 20px; transform: translateY(-50%); }
+  
+  .success-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: green;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.5rem;
+  }
+  
 
   

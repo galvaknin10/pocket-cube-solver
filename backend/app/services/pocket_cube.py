@@ -185,7 +185,7 @@ class Pocket_Cube:
         # Return the final hash representation
         return result
 
-    
+
     def normalize_cube_by_symmetry(self):
         """
         Generate all 24 symmetrical representations of the cube by applying rotations.

@@ -1,11 +1,11 @@
 from fastapi import APIRouter
-from app.solve import solve_cube
+from app.models import CubeState
+from app.services.solve import solve_cube  # ✅ Updated path
 
 router = APIRouter()
 
-@router.get("/solve/{state}")
-def solve(state: str):
-    """Solves the Pocket Cube from the given state."""
-    return solve_cube(state)
-
+@router.post("/solve")
+def solve(state: CubeState):
+    """Receives cube state and returns solution."""
+    return solve_cube(state.cube_data)
 

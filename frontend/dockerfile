@@ -1,0 +1,16 @@
+# Use Nginx for serving the React app
+FROM nginx:alpine
+
+# Set the working directory
+WORKDIR /usr/share/nginx/html
+
+# Remove default nginx static files
+RUN rm -rf ./*
+
+# Copy the built React files
+COPY build .
+
+# Expose port 3000
+EXPOSE 3000
+
+CMD ["nginx", "-g", "daemon off;"]
