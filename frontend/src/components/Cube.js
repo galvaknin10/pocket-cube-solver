@@ -1,57 +1,58 @@
-import React, { useState } from "react";
+/* eslint-disable default-case */
+import React, { useState, useEffect } from "react";
 import "./Cube.css";
 import API_BASE_URL from "../config";
 
-const defaultColors = {
-  U: "blue",   // Up
-  D: "green",  // Down
-  F: "orange", // Front
-  B: "red",    // Back
-  L: "white",  // Left
-  R: "yellow", // Right
-};
+// const defaultColors = {
+//   U: "blue",   // Up
+//   D: "green",  // Down
+//   F: "orange", // Front
+//   B: "red",    // Back
+//   L: "white",  // Left
+//   R: "yellow", // Right
+// };
 
 
 const initialCubeState = [
   {
     id: "UBL",
     position: [-1, 1, -1],
-    colors: { ...defaultColors, U: "blue", B: "red", L: "yellow" },
+    colors: { U: "blue", B: "red", L: "yellow" },
   },
   {
     id: "UBR",
     position: [1, 1, -1],
-    colors: { ...defaultColors, U: "blue", B: "red", R: "white" },
+    colors: { U: "blue", B: "red", R: "white" },
   },
   {
     id: "UFL",
     position: [-1, 1, 1],
-    colors: { ...defaultColors, U: "blue", F: "orange", L: "yellow" },
+    colors: { U: "blue", F: "orange", L: "yellow" },
   },
   {
     id: "UFR",
     position: [1, 1, 1],
-    colors: { ...defaultColors, U: "blue", F: "orange", R: "white" },
+    colors: { U: "blue", F: "orange", R: "white" },
   },
   {
     id: "DBL",
     position: [-1, -1, -1],
-    colors: { ...defaultColors, D: "green", B: "red", L: "yellow" },
+    colors: { D: "green", B: "red", L: "yellow" },
   },
   {
     id: "DBR",
     position: [1, -1, -1],
-    colors: { ...defaultColors, D: "green", B: "red", R: "white" },
+    colors: { D: "green", B: "red", R: "white" },
   },
   {
     id: "DFL",
     position: [-1, -1, 1],
-    colors: { ...defaultColors, D: "green", F: "orange", L: "yellow" },
+    colors: { D: "green", F: "orange", L: "yellow" },
   },
   {
     id: "DFR",
     position: [1, -1, 1],
-    colors: { ...defaultColors, D: "green", F: "orange", R: "white" },
+    colors: { D: "green", F: "orange", R: "white" },
   },
 ];
 
@@ -96,6 +97,7 @@ function getLayerFromFaceAndPosition(face, x, y, z) {
 
 const Cube = () => {
   const [cubeState, setCubeState] = useState(initialCubeState);
+  const [shouldSolve, setShouldSolve] = useState(false);
   const [rotation, setRotation] = useState({ x: -30, y: 45 }); // Whole-cube rotation
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -220,120 +222,158 @@ const Cube = () => {
         const [x, y, z] = position;
         let newPosition = [...position];
         let newColors = { ...colors };
-  
+      
+        // Helper function: assign oldFace to newFace if oldFace existed, then delete oldFace
+        const reassignFace = (oldFace, newFace) => {
+          if (colors[oldFace]) {
+            newColors[newFace] = colors[oldFace];
+            //delete newColors[oldFace];
+          }
+        };
+      
         switch (layer) {
           case "U":
             if (direction > 0) {
+              // +90 around U
               newPosition = [z, y, -x];
-              newColors.U = colors.U; // U always exists for top-layer cubies.
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.L);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.F);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.R);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.B);
+              // Keep U face
+              if (colors.U) newColors.U = colors.U;
+      
+              //F->R, R->B, B->L, L->F
+              reassignFace("F", "R");
+              reassignFace("R", "B");
+              reassignFace("B", "L");
+              reassignFace("L", "F");
             } else {
+              // -90 around U
               newPosition = [-z, y, x];
-              newColors.U = colors.U;
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.F);
+              if (colors.U) newColors.U = colors.U;
+      
+              // F->L, L->B, B->R, R->F (the reverse mapping)
+              reassignFace("F", "L");
+              reassignFace("L", "B");
+              reassignFace("B", "R");
+              reassignFace("R", "F");
             }
             break;
-  
+      
           case "D":
             if (direction > 0) {
               newPosition = [z, y, -x];
-              newColors.D = colors.D;
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.F);
+              if (colors.D) newColors.D = colors.D;
+      
+              // F->L, L->B, B->R, R->F (for example)
+              reassignFace("F", "R");
+              reassignFace("L", "F");
+              reassignFace("B", "L");
+              reassignFace("R", "B");
+
+
+
             } else {
               newPosition = [-z, y, x];
-              newColors.D = colors.D;
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.F);
+              if (colors.D) newColors.D = colors.D;
+      
+              // F->R, R->B, B->L, L->F
+              reassignFace("F", "L");
+              reassignFace("R", "F");
+              reassignFace("B", "R");
+              reassignFace("L", "B");
             }
             break;
-  
+      
           case "F":
             if (direction > 0) {
               newPosition = [y, -x, z];
-              newColors.F = colors.F;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.U);
+              if (colors.F) newColors.F = colors.F;
+      
+              // U->L, L->D, D->R, R->U
+              reassignFace("R", "D");
+              reassignFace("U", "R");
+              reassignFace("L", "U");
+              reassignFace("D", "L");
             } else {
               newPosition = [-y, x, z];
-              newColors.F = colors.F;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.U);
+              if (colors.F) newColors.F = colors.F;
+      
+              // U->R, R->D, D->L, L->U
+              reassignFace("L", "D");
+              reassignFace("U", "L");
+              reassignFace("R", "U");
+              reassignFace("D", "R");
             }
             break;
-  
+      
           case "B":
             if (direction > 0) {
               newPosition = [-y, x, z];
-              newColors.B = colors.B;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.U);
+              if (colors.B) newColors.B = colors.B;
+      
+              // U->R, R->D, D->L, L->U
+              reassignFace("L", "D");
+              reassignFace("U", "L");
+              reassignFace("R", "U");
+              reassignFace("D", "R");
             } else {
               newPosition = [y, -x, z];
-              newColors.B = colors.B;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.L);
-              if (colors.L) newColors.L = updateColor(colors, "L", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.R);
-              if (colors.R) newColors.R = updateColor(colors, "R", colors.U);
+              if (colors.B) newColors.B = colors.B;
+      
+              // U->L, L->D, D->R, R->U
+              reassignFace("R", "D");
+              reassignFace("U", "R");
+              reassignFace("L", "U");
+              reassignFace("D", "L");
             }
             break;
-  
+      
           case "R":
             if (direction > 0) {
               newPosition = [x, z, -y];
-              newColors.R = colors.R;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.F);
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.U);
+              if (colors.R) newColors.R = colors.R;
+      
+              // U->F, F->D, D->B, B->U
+              reassignFace("F", "U");
+              reassignFace("U", "B");
+              reassignFace("B", "D");
+              reassignFace("D", "F");
             } else {
               newPosition = [x, -z, y];
-              newColors.R = colors.R;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.F);
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.U);
+              if (colors.R) newColors.R = colors.R;
+      
+              // U->B, B->D, D->F, F->U
+              reassignFace("B", "U");
+              reassignFace("U", "F");
+              reassignFace("F", "D");
+              reassignFace("D", "B");
             }
             break;
-  
+      
           case "L":
             if (direction > 0) {
               newPosition = [x, -z, y];
-              newColors.L = colors.L;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.F);
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.U);
+              if (colors.L) newColors.L = colors.L;
+      
+              // U->B, B->D, D->F, F->U
+              reassignFace("B", "U");
+              reassignFace("U", "F");
+              reassignFace("F", "D");
+              reassignFace("D", "B");
             } else {
               newPosition = [x, z, -y];
-              newColors.L = colors.L;
-              if (colors.U) newColors.U = updateColor(colors, "U", colors.F);
-              if (colors.F) newColors.F = updateColor(colors, "F", colors.D);
-              if (colors.D) newColors.D = updateColor(colors, "D", colors.B);
-              if (colors.B) newColors.B = updateColor(colors, "B", colors.U);
+              if (colors.L) newColors.L = colors.L;
+      
+              // U->F, F->D, D->B, B->U
+              reassignFace("F", "U");
+              reassignFace("U", "B");
+              reassignFace("B", "D");
+              reassignFace("D", "F");
             }
             break;
-          default:
-            break;
         }
+      
         return { ...cubie, position: newPosition, colors: newColors };
       };
+      
   
       const updated = {};
       affectedCubies.forEach((cubie) => {
@@ -344,213 +384,423 @@ const Cube = () => {
     });
   };
   
-const scrambleCube = async () => {
-  // Decide how many random moves you want:
-  const SCRAMBLE_LENGTH = 15; // or 20, etc.
+  const scrambleCube = async () => {
+    // Decide how many random moves you want:
+    const SCRAMBLE_LENGTH = 15; // or 20, etc.
 
-  const faces = ["U", "D", "L", "R", "F", "B"];
-  const directions = [90, -90]; // clockwise or counterclockwise
+    const faces = ["U", "D", "L", "R", "F", "B"];
+    const directions = [90, -90]; // clockwise or counterclockwise
 
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms)); // Delay function
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms)); // Delay function
 
-  for (let i = 0; i < SCRAMBLE_LENGTH; i++) {
-    const randomFace = faces[Math.floor(Math.random() * faces.length)];
-    const randomDir = directions[Math.floor(Math.random() * directions.length)];
-    
-    // rotateLayerCubies is your existing method to do 90° turns
-    rotateLayerCubies(randomFace, randomDir);
+    for (let i = 0; i < SCRAMBLE_LENGTH; i++) {
+      const randomFace = faces[Math.floor(Math.random() * faces.length)];
+      const randomDir = directions[Math.floor(Math.random() * directions.length)];
+      
+      // rotateLayerCubies is your existing method to do 90° turns
+      rotateLayerCubies(randomFace, randomDir);
 
-    // Wait for a timeout before the next move (e.g., 300ms between moves)
-    await delay(300); 
-  }
-};
-
-const flattenCubeStateByPosition = (cubeState) => {
-  // Convert color strings to single-letter codes
-  const getColorLetter = (color) => {
-    const colorMap = {
-      white: "W",
-      yellow: "Y",
-      blue: "B",
-      green: "G",
-      red: "R",
-      orange: "O",
-    };
-    return colorMap[color] || "?";
-  };
-
-  // ========== U FACE ========== 
-  // y === 1, have a U sticker
-  const getUIndex = (cubie) => {
-    const [x, _, z] = cubie.position;
-    // Example: top-left => 0, top-right => 1, bottom-left => 2, bottom-right => 3
-    // Fill in the coordinates that physically match each slot.
-    // (Just like your existing getUIndex)
-    if (x ===  1 && z === -1) return 2;  
-    if (x === -1 && z === -1) return 3;
-    if (x ===  1 && z ===  1) return 0;
-    if (x === -1 && z ===  1) return 1;
-    return 99; 
-  };
-
-  // ========== D FACE ========== 
-  // y === -1, have a D sticker
-  const getDIndex = (cubie) => {
-    const [x, _, z] = cubie.position;
-    // TODO: Decide how you'd like to label D's top-left => 0, top-right => 1, etc.
-    // For instance:
-    // if (x=-1,z=-1) => 0, (x=1,z=-1) => 1, (x=-1,z=1) => 2, (x=1,z=1) => 3
-    // or any arrangement that yields the correct “visual” order for D.
-    if (x === -1 && z === -1) return 2;
-    if (x ===  1 && z === -1) return 3;
-    if (x === -1 && z ===  1) return 0;
-    if (x ===  1 && z ===  1) return 1;
-    return 99;
-  };
-
-  // ========== F FACE ==========
-  const getFIndex = (cubie) => {
-    const [x, y, z] = cubie.position;
-    // y is your vertical axis, x is left-right, z=1 for front
-    // Decide which coordinate combos map to top-left => 0, top-right => 1, etc.
-    // Example:
-    // if (y=1, x=-1) => 0, (y=1, x=1) => 1, (y=-1, x=-1) => 2, (y=-1, x=1) => 3
-    // So you end up with top row = y=1, bottom row = y=-1, left col = x=-1, right col = x=1
-    if (y ===  1 && x === -1) return 0;
-    if (y ===  1 && x ===  1) return 1;
-    if (y === -1 && x === -1) return 2;
-    if (y === -1 && x ===  1) return 3;
-    return 99;
-  };
-
-  // ========== B FACE ==========
-  const getBIndex = (cubie) => {
-    const [x, y, z] = cubie.position;
-    // Similar logic for the back face (z=-1).
-    // If you want top-left => y=1,x=1 => 0, etc., fill it in:
-    if (y ===  1 && x ===  1) return 0;
-    if (y ===  1 && x === -1) return 1;
-    if (y === -1 && x ===  1) return 2;
-    if (y === -1 && x === -1) return 3;
-    return 99;
-  };
-
-  // ========== L FACE ==========
-  const getLIndex = (cubie) => {
-    const [x, y, z] = cubie.position;
-    // x = -1 for left
-    // Decide top-left => (?), top-right => (?), bottom-left => (?), etc.
-    // Possibly y=1 => top, z=-1 => left, etc.
-    if (y === 1 && z === 1) return 1;
-    if (y === 1 && z === -1) return 0;
-    if (y === -1 && z === 1) return 3;
-    if (y === -1 && z === -1) return 2;
-    return 99;
-  };
-
-  // ========== R FACE ==========
-  const getRIndex = (cubie) => {
-    const [x, y, z] = cubie.position;
-    // x=+1 for right
-    // Fill in your top-left -> index0, top-right -> index1, etc.
-    if (y ===  1 && z === -1) return 1;
-    if (y ===  1 && z ===  1)  return 0;
-    if (y === -1 && z === -1) return 3;
-    if (y === -1 && z ===  1) return 2;
-    return 99;
-  };
-
-  // The main function to get stickers for each face:
-  const getFaceStickers = (face) => {
-    let filtered = [];
-    switch (face) {
-      case "U": {
-        filtered = cubeState.filter(c => c.position[1] === 1 && c.colors.U);
-        filtered.sort((a, b) => getUIndex(a) - getUIndex(b));
-        return filtered.map(c => getColorLetter(c.colors.U)).join("");
-      }
-      case "D": {
-        filtered = cubeState.filter(c => c.position[1] === -1 && c.colors.D);
-        filtered.sort((a, b) => getDIndex(a) - getDIndex(b));
-        return filtered.map(c => getColorLetter(c.colors.D)).join("");
-      }
-      case "F": {
-        filtered = cubeState.filter(c => c.position[2] === 1 && c.colors.F);
-        filtered.sort((a, b) => getFIndex(a) - getFIndex(b));
-        return filtered.map(c => getColorLetter(c.colors.F)).join("");
-      }
-      case "B": {
-        filtered = cubeState.filter(c => c.position[2] === -1 && c.colors.B);
-        filtered.sort((a, b) => getBIndex(a) - getBIndex(b));
-        return filtered.map(c => getColorLetter(c.colors.B)).join("");
-      }
-      case "L": {
-        filtered = cubeState.filter(c => c.position[0] === -1 && c.colors.L);
-        filtered.sort((a, b) => getLIndex(a) - getLIndex(b));
-        return filtered.map(c => getColorLetter(c.colors.L)).join("");
-      }
-      case "R": {
-        filtered = cubeState.filter(c => c.position[0] === 1 && c.colors.R);
-        filtered.sort((a, b) => getRIndex(a) - getRIndex(b));
-        return filtered.map(c => getColorLetter(c.colors.R)).join("");
-      }
-      default:
-        return "";
+      // Wait for a timeout before the next move (e.g., 300ms between moves)
+      await delay(300); 
     }
   };
 
-  // Flatten in the face order your solver expects
-  const faceOrder = ["U", "D", "F", "B", "R", "L"];
-  return faceOrder.map(face => getFaceStickers(face)).join("");
-};
-
-
-
-
-
-
-  // Helper function to map colors to single-character letters
-  const getColorLetter = (color) => {
-    const colorMap = {
-      white: "W",
-      yellow: "Y",
-      blue: "B",
-      green: "G",
-      red: "R",
-      orange: "O",
+  const flattenCubeStateByPosition = (cubeState) => {
+    // Convert color strings to single-letter codes
+    const getColorLetter = (color) => {
+      const colorMap = {
+        white: "W",
+        yellow: "Y",
+        blue: "B",
+        green: "G",
+        red: "R",
+        orange: "O",
+      };
+      return colorMap[color] || "?";
     };
-    return colorMap[color] || "?"; // Default to "?" if a color is missing
+
+    // ========== U FACE ========== 
+    // y === 1, have a U sticker
+    const getUIndex = (cubie) => {
+      const [x, _, z] = cubie.position;
+      // Example: top-left => 0, top-right => 1, bottom-left => 2, bottom-right => 3
+      // Fill in the coordinates that physically match each slot.
+      // (Just like your existing getUIndex)
+      if (x ===  1 && z === -1) return 2;  
+      if (x === -1 && z === -1) return 3;
+      if (x ===  1 && z ===  1) return 0;
+      if (x === -1 && z ===  1) return 1;
+      return 99; 
+    };
+
+    // ========== D FACE ========== 
+    // y === -1, have a D sticker
+    const getDIndex = (cubie) => {
+      const [x, _, z] = cubie.position;
+      // TODO: Decide how you'd like to label D's top-left => 0, top-right => 1, etc.
+      // For instance:
+      // if (x=-1,z=-1) => 0, (x=1,z=-1) => 1, (x=-1,z=1) => 2, (x=1,z=1) => 3
+      // or any arrangement that yields the correct “visual” order for D.
+      if (x === -1 && z === -1) return 2;
+      if (x ===  1 && z === -1) return 3;
+      if (x === -1 && z ===  1) return 0;
+      if (x ===  1 && z ===  1) return 1;
+      return 99;
+    };
+
+    // ========== F FACE ==========
+    const getFIndex = (cubie) => {
+      const [x, y, z] = cubie.position;
+      // y is your vertical axis, x is left-right, z=1 for front
+      // Decide which coordinate combos map to top-left => 0, top-right => 1, etc.
+      // Example:
+      // if (y=1, x=-1) => 0, (y=1, x=1) => 1, (y=-1, x=-1) => 2, (y=-1, x=1) => 3
+      // So you end up with top row = y=1, bottom row = y=-1, left col = x=-1, right col = x=1
+      if (y ===  1 && x === -1) return 0;
+      if (y ===  1 && x ===  1) return 1;
+      if (y === -1 && x === -1) return 2;
+      if (y === -1 && x ===  1) return 3;
+      return 99;
+    };
+
+    // ========== B FACE ==========
+    const getBIndex = (cubie) => {
+      const [x, y, z] = cubie.position;
+      // Similar logic for the back face (z=-1).
+      // If you want top-left => y=1,x=1 => 0, etc., fill it in:
+      if (y ===  1 && x ===  1) return 0;
+      if (y ===  1 && x === -1) return 1;
+      if (y === -1 && x ===  1) return 2;
+      if (y === -1 && x === -1) return 3;
+      return 99;
+    };
+
+    // ========== L FACE ==========
+    const getLIndex = (cubie) => {
+      const [x, y, z] = cubie.position;
+      // x = -1 for left
+      // Decide top-left => (?), top-right => (?), bottom-left => (?), etc.
+      // Possibly y=1 => top, z=-1 => left, etc.
+      if (y === 1 && z === 1) return 1;
+      if (y === 1 && z === -1) return 0;
+      if (y === -1 && z === 1) return 3;
+      if (y === -1 && z === -1) return 2;
+      return 99;
+    };
+
+    // ========== R FACE ==========
+    const getRIndex = (cubie) => {
+      const [x, y, z] = cubie.position;
+      // x=+1 for right
+      // Fill in your top-left -> index0, top-right -> index1, etc.
+      if (y ===  1 && z === -1) return 1;
+      if (y ===  1 && z ===  1)  return 0;
+      if (y === -1 && z === -1) return 3;
+      if (y === -1 && z ===  1) return 2;
+      return 99;
+    };
+
+    // The main function to get stickers for each face:
+    const getFaceStickers = (face) => {
+      let filtered = [];
+      switch (face) {
+        case "U": {
+          filtered = cubeState.filter(c => c.position[1] === 1 && c.colors.U);
+          filtered.sort((a, b) => getUIndex(a) - getUIndex(b));
+          return filtered.map(c => getColorLetter(c.colors.U)).join("");
+        }
+        case "D": {
+          filtered = cubeState.filter(c => c.position[1] === -1 && c.colors.D);
+          filtered.sort((a, b) => getDIndex(a) - getDIndex(b));
+          return filtered.map(c => getColorLetter(c.colors.D)).join("");
+        }
+        case "F": {
+          filtered = cubeState.filter(c => c.position[2] === 1 && c.colors.F);
+          filtered.sort((a, b) => getFIndex(a) - getFIndex(b));
+          return filtered.map(c => getColorLetter(c.colors.F)).join("");
+        }
+        case "B": {
+          filtered = cubeState.filter(c => c.position[2] === -1 && c.colors.B);
+          filtered.sort((a, b) => getBIndex(a) - getBIndex(b));
+          return filtered.map(c => getColorLetter(c.colors.B)).join("");
+        }
+        case "L": {
+          filtered = cubeState.filter(c => c.position[0] === -1 && c.colors.L);
+          filtered.sort((a, b) => getLIndex(a) - getLIndex(b));
+          return filtered.map(c => getColorLetter(c.colors.L)).join("");
+        }
+        case "R": {
+          filtered = cubeState.filter(c => c.position[0] === 1 && c.colors.R);
+          filtered.sort((a, b) => getRIndex(a) - getRIndex(b));
+          return filtered.map(c => getColorLetter(c.colors.R)).join("");
+        }
+        default:
+          return "";
+      }
+    };
+
+    // Flatten in the face order your solver expects
+    const faceOrder = ["U", "D", "F", "B", "R", "L"];
+    return faceOrder.map(face => getFaceStickers(face)).join("");
   };
 
 
 
-  const handleSolve = async () => {
-    // Convert cubeState into a flat string
+
+  const checkSymmetryAndSolve = async () => {
+    // 1) Flatten the user’s current cube state
+    console.log("Cube state original format - Before update:" , cubeState);
     const cubeString = flattenCubeStateByPosition(cubeState);
     console.log("Flattened Cube String:", cubeString);
+
+    try {
+      // 2) Call your /find_symmetry endpoint first
+      const res = await fetch(`${API_BASE_URL}/find_symmetry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cube_data: cubeString }),
+      });
+      const data = await res.json();
+      
+      if (!data.found) {
+        console.log("No matching or symmetrical version found. Cannot solve.");
+        return; // or show a UI error
+      }
+      
+      // If found == true
+      if (data.state !== cubeString) {
+        // Means we have a symmetrical match that differs from the user's state
+        console.log("Server suggests symmetrical reorientation:", data.state);
+        // 3) Reorient the cube to that symmetrical version
+        reorientCubeFromString(data.state);
+      }
+
+      else {
+        // If no reorientation is needed, we can still trigger the solver:
+        setShouldSolve(true);
+      }
+
+      
+    } catch (err) {
+      console.error("Error checking symmetry:", err);
+    }
+  }
+
+    // useEffect to call solver after state is updated
+  useEffect(() => {
+    if (shouldSolve) {
+      callSolveEndpoint(); // uses the *latest* cubeState
+      setShouldSolve(false);
+    }
+  }, [cubeState, shouldSolve]);
+  
+  // Example: callSolveEndpoint references your existing handleSolve logic
+  const callSolveEndpoint = async () => {
+    console.log("Cube state original format - after update:" , cubeState);
+
+    const cubeString = flattenCubeStateByPosition(cubeState);
+    //const finalString = flattenCubeStateByPosition(cubeState);
+    // the existing logic from handleSolve
+    console.log("Cube state string - after upadate: ", cubeString);
+
     try {
       const response = await fetch(`${API_BASE_URL}/solve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cube_data: cubeString }),
       });
-
       const data = await response.json();
-      console.log("API response:", data);
-
-      if (data === null) {
+      if (!data) {
         console.log("no matching solution found");
         return;
       }
-
-      const solutionMoves = data.solution;
-
-      // Run animation or guide user through solution
-      guideUserThroughSolution(solutionMoves);
+      guideUserThroughSolution(data.solution);
     } catch (error) {
       console.error("Error solving:", error);
     }
   };
+  
+  
+  function createBlankCubeState() {
+    return [
+      {
+        id: "UBL",
+        position: [-1, 1, -1],
+        colors: {},
+      },
+      {
+        id: "UBR",
+        position: [1, 1, -1],
+        colors: {},
+      },
+      {
+        id: "UFL",
+        position: [-1, 1, 1],
+        colors: {},
+      },
+      {
+        id: "UFR",
+        position: [1, 1, 1],
+        colors: {},
+      },
+      {
+        id: "DBL",
+        position: [-1, -1, -1],
+        colors: {},
+      },
+      {
+        id: "DBR",
+        position: [1, -1, -1],
+        colors: {},
+      },
+      {
+        id: "DFL",
+        position: [-1, -1, 1],
+        colors: {},
+      },
+      {
+        id: "DFR",
+        position: [1, -1, 1],
+        colors: {},
+      },
+    ];
+  }
+  
+
+  function reorientCubeFromString(cubeString) {
+  // We'll parse 24 characters in blocks of 4 for U,D,F,B,R,L
+  // For each block, we figure out which cubies get which face color
+
+    const faceOrder = ["U", "D", "F", "B", "R", "L"];
+    // A helper to convert a single letter like 'B' or 'O' back to e.g. "blue" or "orange"
+    const colorMapReverse = {
+      "W": "white",
+      "Y": "yellow",
+      "B": "blue",
+      "G": "green",
+      "R": "red",
+      "O": "orange",
+    };
+
+    // 1) Create a blank 8-cubie array
+    let newState = createBlankCubeState();
+
+    // 2) Define the “index → coordinate” for each face
+    const getUCoordinateByIndex = (i) => {
+      // Inverse of your getUIndex. 
+      switch(i) {
+        case 2: return [1, 1, -1];   // x=1,z=-1
+        case 3: return [-1,1, -1];  // x=-1,z=-1
+        case 0: return [1, 1, 1];    // x=1,z=1
+        case 1: return [-1,1, 1];    // x=-1,z=1
+        default:
+          return " "
+      }
+    };
+
+    const getDCoordinateByIndex = (i) => {
+      switch(i) {
+        case 2: return [-1,-1,-1];
+        case 3: return [1, -1, -1];
+        case 0: return [-1,-1, 1];
+        case 1: return [1, -1, 1];
+        default:
+          return " "
+      }
+    };
+
+    const getFCoordinateByIndex = (i) => {
+      switch(i) {
+        case 0: return [-1,1,1];
+        case 1: return [1, 1,1];
+        case 2: return [-1,-1,1];
+        case 3: return [1, -1,1];
+        default:
+          return " "
+      }
+    };
+
+    
+    const getBCoordinateByIndex = (i) => {
+      switch(i) {
+        case 0: return [1,1,-1];
+        case 1: return [-1, 1,-1];
+        case 2: return [1,-1,-1];
+        case 3: return [-1, -1,-1];
+        default:
+          return " "
+      }
+    };
+
+    const getLCoordinateByIndex = (i) => {
+      switch(i) {
+        case 1: return [-1,1,1];
+        case 0: return [-1, 1,-1];
+        case 3: return [-1,-1,1];
+        case 2: return [-1, -1,-1];
+        default:
+          return " "
+      }
+    };
+
+    
+    const getRCoordinateByIndex = (i) => {
+      switch(i) {
+        case 1: return [1,1,-1];
+        case 0: return [1, 1,1];
+        case 3: return [1,-1,-1];
+        case 2: return [1, -1,1];
+        default:
+          return " "
+      }
+    };
+    // Similarly define getFCoordinateByIndex, getBCoordinateByIndex, etc...
+    // matching how you set up getFIndex, getBIndex, etc.
+
+    // 3) A helper that finds the cubie in newState that matches a coordinate
+    function findCubieByPosition(x, y, z) {
+      return newState.find(c => 
+        c.position[0] === x &&
+        c.position[1] === y &&
+        c.position[2] === z
+      );
+    }
+
+    // 4) Parse the cubeString in 6 chunks of 4
+    let offset = 0;
+    for (let face of faceOrder) {
+      const faceChars = cubeString.slice(offset, offset+4); // next 4 letters
+      offset += 4;
+
+      for (let i = 0; i < 4; i++) {
+        const letter = faceChars[i];  // e.g. 'B', 'O', 'W'
+        const colorString = colorMapReverse[letter] || "unknown";
+
+        let xyz;
+        if (face === "U") {
+          xyz = getUCoordinateByIndex(i);
+        } else if (face === "D") {
+          xyz = getDCoordinateByIndex(i);
+        } 
+        else if (face === "F") { xyz = getFCoordinateByIndex(i); }
+        else if (face === "B") { xyz = getBCoordinateByIndex(i); }
+        else if (face === "R") { xyz = getRCoordinateByIndex(i); }
+        else if (face === "L") { xyz = getLCoordinateByIndex(i); }
+
+        const [x,y,z] = xyz;
+        // find the matching cubie
+        const cubie = findCubieByPosition(x,y,z);
+        if (cubie) {
+          cubie.colors[face] = colorString;
+        }
+      }
+    }
+    // fill in newState
+    setCubeState(newState);
+
+    // Also set a flag
+    setShouldSolve(true);
+  }
 
   
 
@@ -563,7 +813,7 @@ const flattenCubeStateByPosition = (cubeState) => {
       }
 
       let direction = 90;
-      if (layer === "R" || layer === "B") {
+      if (layer === "B" || layer === "L") {
         direction = -90;
       }
       // Show guidance with an arrow
@@ -689,7 +939,7 @@ const flattenCubeStateByPosition = (cubeState) => {
   return (
     <div>
       <button onClick={scrambleCube}>Scramble</button> {/* Add the scramble button here */}
-      <button onClick={handleSolve} style={{ marginLeft: "10px" }}>Solve</button> {/* Solve button */}
+      <button onClick={checkSymmetryAndSolve} style={{ marginLeft: "10px" }}>Solve</button> {/* Solve button */}
       <div
         className="cube-container"
         onMouseDown={handleMouseDown}
