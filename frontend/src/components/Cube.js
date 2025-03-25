@@ -102,9 +102,16 @@ const Cube = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [selectedLayer, setSelectedLayer] = useState(null);
+  const [solutionSteps, setSolutionSteps] = useState([]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [guideMode, setGuideMode] = useState(false);
+  const [isScrambling, setIsScrambling] = useState(false);
+
+  
 
   // --- MOUSE EVENTS ---
   const handleMouseDown = (event) => {
+    event.preventDefault();
     // 1) Check if you clicked on a specific face via data-face
     const faceElement = event.target.closest(".cubie-face");
     if (faceElement) {
@@ -154,17 +161,49 @@ const Cube = () => {
       setDragStart({ x: event.clientX, y: event.clientY });
     }
     
-
-    // B) If dragging a face to rotate that layer
-    if (selectedLayer) {
-      const deltaX = event.clientX - dragStart.x;
-      if (Math.abs(deltaX) > 30) {
+    if (!guideMode) {
+      // B) If dragging a face to rotate that layer
+      if (selectedLayer) {
+        const deltaX = event.clientX - dragStart.x;
+        if (Math.abs(deltaX) > 30) {
+          const direction = deltaX > 0 ? 90 : -90;
+          rotateLayerCubies(selectedLayer, direction);
+          setSelectedLayer(null); // Prevent repeated rotations on same drag
+        }
+      }
+    } else {
+      const expectedLayer = solutionSteps[currentStepIndex]; 
+      if (selectedLayer === expectedLayer) {
+        const deltaX = event.clientX - dragStart.x;
         const direction = deltaX > 0 ? 90 : -90;
-        rotateLayerCubies(selectedLayer, direction);
-        setSelectedLayer(null); // Prevent repeated rotations on same drag
+        let validRotate = false;
+
+        if ((selectedLayer === "U" || selectedLayer === "F" || selectedLayer === "R" || selectedLayer === "D") && direction === 90) {
+          validRotate = true;
+        }
+
+        if ((selectedLayer === "B" || selectedLayer === "L") && direction === -90) {
+          validRotate = true;
+        }
+      
+        if (Math.abs(deltaX) > 30 && validRotate) {
+          //const direction = deltaX > 0 ? 90 : -90;
+          rotateLayerCubies(selectedLayer, direction);
+          setSelectedLayer(null); // Prevent repeated rotations on same drag
+          handleUserRotationDone();
+          validRotate = false;
+        }
       }
     }
   };
+
+
+      // // Determine arrow direction
+      // let direction = 90;
+      // if (layer === "B" || layer === "L") {
+      //   direction = -90;
+      // }
+    
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -212,10 +251,10 @@ const Cube = () => {
         (c) => c.position[axisIndex] === axisValue
       );
   
-      // Helper to update a sticker only if it exists.
-      const updateColor = (colors, target, value) => {
-        return colors.hasOwnProperty(target) ? value : undefined;
-      };
+      // // Helper to update a sticker only if it exists.
+      // const updateColor = (colors, target, value) => {
+      //   return colors.hasOwnProperty(target) ? value : undefined;
+      // };
   
       const rotateCubie = (cubie) => {
         const { position, colors } = cubie;
@@ -393,6 +432,8 @@ const Cube = () => {
 
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms)); // Delay function
 
+    setIsScrambling(true); // Start scrambling
+
     for (let i = 0; i < SCRAMBLE_LENGTH; i++) {
       const randomFace = faces[Math.floor(Math.random() * faces.length)];
       const randomDir = directions[Math.floor(Math.random() * directions.length)];
@@ -401,8 +442,9 @@ const Cube = () => {
       rotateLayerCubies(randomFace, randomDir);
 
       // Wait for a timeout before the next move (e.g., 300ms between moves)
-      await delay(300); 
+      await delay(200); 
     }
+    setIsScrambling(false); // Scrambling done
   };
 
   const flattenCubeStateByPosition = (cubeState) => {
@@ -547,78 +589,78 @@ const Cube = () => {
 
 
 
-  const checkSymmetryAndSolve = async () => {
-    // 1) Flatten the user’s current cube state
-    console.log("Cube state original format - Before update:" , cubeState);
-    const cubeString = flattenCubeStateByPosition(cubeState);
-    console.log("Flattened Cube String:", cubeString);
+  // const checkSymmetryAndSolve = async () => {
+  //   // 1) Flatten the user’s current cube state
+  //   console.log("Cube state original format - Before update:" , cubeState);
+  //   const cubeString = flattenCubeStateByPosition(cubeState);
+  //   console.log("Flattened Cube String:", cubeString);
 
-    try {
-      // 2) Call your /find_symmetry endpoint first
-      const res = await fetch(`${API_BASE_URL}/find_symmetry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cube_data: cubeString }),
-      });
-      const data = await res.json();
+  //   try {
+  //     // 2) Call your /find_symmetry endpoint first
+  //     const res = await fetch(`${API_BASE_URL}/find_symmetry`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ cube_data: cubeString }),
+  //     });
+  //     const data = await res.json();
       
-      if (!data.found) {
-        console.log("No matching or symmetrical version found. Cannot solve.");
-        return; // or show a UI error
-      }
+  //     if (!data.found) {
+  //       console.log("No matching or symmetrical version found. Cannot solve.");
+  //       return; // or show a UI error
+  //     }
       
-      // If found == true
-      if (data.state !== cubeString) {
-        // Means we have a symmetrical match that differs from the user's state
-        console.log("Server suggests symmetrical reorientation:", data.state);
-        // 3) Reorient the cube to that symmetrical version
-        reorientCubeFromString(data.state);
-      }
+  //     // If found == true
+  //     if (data.state !== cubeString) {
+  //       // Means we have a symmetrical match that differs from the user's state
+  //       console.log("Server suggests symmetrical reorientation:", data.state);
+  //       // 3) Reorient the cube to that symmetrical version
+  //       reorientCubeFromString(data.state);
+  //     }
 
-      else {
-        // If no reorientation is needed, we can still trigger the solver:
-        setShouldSolve(true);
-      }
+  //     else {
+  //       // If no reorientation is needed, we can still trigger the solver:
+  //       setShouldSolve(true);
+  //     }
 
       
-    } catch (err) {
-      console.error("Error checking symmetry:", err);
-    }
-  }
+  //   } catch (err) {
+  //     console.error("Error checking symmetry:", err);
+  //   }
+  // }
 
-    // useEffect to call solver after state is updated
-  useEffect(() => {
-    if (shouldSolve) {
-      callSolveEndpoint(); // uses the *latest* cubeState
-      setShouldSolve(false);
-    }
-  }, [cubeState, shouldSolve]);
+  //   // useEffect to call solver after state is updated
+  // useEffect(() => {
+  //   if (shouldSolve) {
+  //     callSolveEndpoint(); // uses the *latest* cubeState
+  //     setShouldSolve(false);
+  //   }
+  // }, [cubeState, shouldSolve]);
   
   // Example: callSolveEndpoint references your existing handleSolve logic
-  const callSolveEndpoint = async () => {
-    console.log("Cube state original format - after update:" , cubeState);
+  // const callSolveEndpoint = async () => {
+  //   console.log("Cube state original format - after update:" , cubeState);
 
-    const cubeString = flattenCubeStateByPosition(cubeState);
-    //const finalString = flattenCubeStateByPosition(cubeState);
-    // the existing logic from handleSolve
-    console.log("Cube state string - after upadate: ", cubeString);
+  //   const cubeString = flattenCubeStateByPosition(cubeState);
+  //   //const finalString = flattenCubeStateByPosition(cubeState);
+  //   // the existing logic from handleSolve
+  //   console.log("Cube state string - after upadate: ", cubeString);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/solve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cube_data: cubeString }),
-      });
-      const data = await response.json();
-      if (!data) {
-        console.log("no matching solution found");
-        return;
-      }
-      guideUserThroughSolution(data.solution);
-    } catch (error) {
-      console.error("Error solving:", error);
-    }
-  };
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/solve`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ cube_data: cubeString }),
+  //     });
+  //     const data = await response.json();
+  //     if (!data) {
+  //       console.log("no matching solution found");
+  //       return;
+  //     }
+  //     guideUserThroughSolution(data.solution);
+  //   } catch (error) {
+  //     console.error("Error solving:", error);
+  //   }
+  // };
   
   
   function createBlankCubeState() {
@@ -799,64 +841,187 @@ const Cube = () => {
     setCubeState(newState);
 
     // Also set a flag
-    setShouldSolve(true);
+    //setShouldSolve(true);
   }
 
   
-
-  const guideUserThroughSolution = async (solutionMoves) => {
-    for (const layer of solutionMoves) {
-
-      if (layer === "Congratulations!") {
-        console.log("Done!");
+    // 1) "Find Solution" button
+    const handleFindSolution = async () => {
+      if (isScrambling) {
         return;
       }
+      
+      const cubeString = flattenCubeStateByPosition(cubeState);
+  
+      try {
+        // Check for symmetry
+        const symmetryRes = await fetch(`${API_BASE_URL}/find_symmetry`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cube_data: cubeString }),
+        });
+        const symmetryData = await symmetryRes.json();
+  
+        if (!symmetryData.found) {
+          console.log("No symmetrical version found. Can't solve.");
+          setSolutionSteps(null);
+          return;
+        }
+  
+        // If we got a symmetrical match, reorient the cube
+        if (symmetryData.state !== cubeString) {
+          reorientCubeFromString(symmetryData.state);
+          console.log("notice: cube switch to identical symmetic state - adapt your cube with this symmetrica state")
+        }
+  
+        // Now request the solution steps from /solve
+        const solveRes = await fetch(`${API_BASE_URL}/solve`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cube_data: symmetryData.state }),
+        });
+        const solveData = await solveRes.json();
+  
+  
+        if (solveData.solution[0] === "Congratulations!") {
+          console.log("Cube is already in its solved state");
+          showSuccessMessage();
+          setSolutionSteps(null);
+          return;
+        }
 
-      let direction = 90;
-      if (layer === "B" || layer === "L") {
-        direction = -90;
+        setSolutionSteps(solveData.solution);
+
+        console.log("Solution steps are ready. Click 'Guide Me' to start solving.");
+      } catch (err) {
+        console.error("Error finding or solving:", err);
       }
-      // Show guidance with an arrow
-      showArrowOnFace(layer, direction);
+    };
   
-      // Wait before animating the move
-      await delay(1000);  // 1-second pause before executing the move
+    // 2) "Guide Me" button
+    const handleGuideMe = () => {
+      if (!solutionSteps || solutionSteps.length === 0) {
+        console.log("No solution steps. Click 'Find Solution' first.");
+        return;
+      }
+      // Start from the first move
+      setGuideMode(true);
+      setCurrentStepIndex(0);
+      showManualStep(0);
+    };
+    
+
+
+  // const guideUserThroughSolution = async (solutionMoves) => {
+  //   for (const layer of solutionMoves) {
+
+  //     if (layer === "Congratulations!") {
+  //       console.log("Done!");
+  //       return;
+  //     }
+
+  //     let direction = 90;
+  //     if (layer === "B" || layer === "L") {
+  //       direction = -90;
+  //     }
+  //     // Show guidance with an arrow
+  //     showArrowOnFace(layer, direction);
   
-      // Perform the rotation (animate and update state)
-      rotateLayerCubies(layer, direction);
+  //     // Wait before animating the move
+  //     await delay(1000);  // 1-second pause before executing the move
   
-      // Remove the arrow after the move
-      removeArrowFromFace(layer);
+  //     // Perform the rotation (animate and update state)
+  //     rotateLayerCubies(layer, direction);
   
-      // Wait before moving to the next step
-      await delay(1000);
+  //     // Remove the arrow after the move
+  //     removeArrowFromFace(layer);
+  
+  //     // Wait before moving to the next step
+  //     await delay(1000);
+  //   }
+  
+  //   // Final success message
+  //   showSuccessMessage();
+  // };
+  
+
+  const showManualStep = (index) => {
+    // If we’re beyond the last move, show success
+    if (index >= solutionSteps.length) {
+      showSuccessMessage();
+      return;
     }
   
-    // Final success message
-    showSuccessMessage();
+    const layer = solutionSteps[index];
+    // If it's some special marker like "Congratulations!"
+    if (layer === "Congratulations!") {
+      showSuccessMessage();
+      setGuideMode(false);
+      return;
+    }
+  
+    // Determine arrow direction
+    let direction = 90;
+    if (layer === "B" || layer === "L") {
+      direction = -90;
+    }
+  
+    // Display the arrow on the correct face
+    showArrowsOnLayer(layer, direction);
+  
+    // Now we wait for the user to rotate manually...
+    // The user will click "Next" or some UI button once they’ve done the move
+  };
+
+  const handleUserRotationDone = () => {
+    // Remove the arrow from the current face
+    const layer = solutionSteps[currentStepIndex];
+    removeArrowsFromLayer(layer);
+  
+    // Move on to the next step
+    const nextIndex = currentStepIndex + 1;
+    setCurrentStepIndex(nextIndex);
+    showManualStep(nextIndex);
+  };
+  
+  
+
+  const showArrowsOnLayer = (layer, direction) => {
+    setTimeout(() => {
+      // Grab all .cubie-face elements whose data-face matches
+      const faceElements = document.querySelectorAll(`.cubie-face[data-face="${layer}"]`);
+  
+      faceElements.forEach((face) => {
+        // Create the arrow element
+        const arrow = document.createElement("div");
+        arrow.classList.add("rotation-arrow");
+  
+        if (layer === "U") {
+          arrow.innerHTML = direction < 0 ? "↻" : "↺";
+        } else {
+          arrow.innerHTML = direction > 0 ? "↻" : "↺";
+        }
+  
+        // Append the arrow to the face
+        face.appendChild(arrow);
+      });
+    }, 200); // Delay of 200ms; adjust as needed
   };
   
 
-  const showArrowOnFace = (layer, direction) => {
-    const faceElement = document.querySelector(`.face-${layer}`); // Select the correct face div
-    if (!faceElement) return;
 
-    // Create an arrow element
-    const arrow = document.createElement("div");
-    arrow.classList.add("rotation-arrow");
-    arrow.innerHTML = direction > 0 ? "⟳" : "⟲"; // Clockwise or counterclockwise symbol
-    faceElement.appendChild(arrow);
+  
+
+  // Remove arrows from every face in that layer
+  const removeArrowsFromLayer = (layer) => {
+    const faceElements = document.querySelectorAll(`.cubie-face[data-face="${layer}"]`);
+
+    faceElements.forEach((face) => {
+      const arrow = face.querySelector(".rotation-arrow");
+      if (arrow) arrow.remove();
+    });
   };
 
-
-  const removeArrowFromFace = (layer) => {
-    const faceElement = document.querySelector(`.face-${layer}`);
-    if (!faceElement) return;
-  
-    const arrow = faceElement.querySelector(".rotation-arrow");
-    if (arrow) arrow.remove();
-  };
-  
 
   const showSuccessMessage = () => {
     const messageBox = document.createElement("div");
@@ -892,6 +1057,8 @@ const Cube = () => {
             height: "88px",
             transform: `translate3d(${cx * 45}px, ${-cy * 45}px, ${cz * 45}px)`,
             transformStyle: "preserve-3d",
+
+          
           }}
         >
           {Object.entries(colors).map(([face, color]) => (
@@ -906,7 +1073,6 @@ const Cube = () => {
                 border: "8px solid black",
                 backgroundColor: color,
                 transform: getFaceTransform(face),
-                cursor: "pointer",
               }}
             />
           ))}
@@ -938,24 +1104,24 @@ const Cube = () => {
 
   return (
     <div>
-      <button onClick={scrambleCube}>Scramble</button> {/* Add the scramble button here */}
-      <button onClick={checkSymmetryAndSolve} style={{ marginLeft: "10px" }}>Solve</button> {/* Solve button */}
+      <div className="button-container">
+        <button className="scramble" onClick={scrambleCube}>Scramble</button>
+        <button className="find-solution" onClick={handleFindSolution}>Find Solution</button>
+        <button className="guide-me" onClick={handleGuideMe}>Guide Me</button>
+      </div>
       <div
         className="cube-container"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
-        style={{ width: "700px", height: "700px", position: "relative" }}
+
       >
         <div
           className="cube"
+          draggable="false"
           style={{
             transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-            transformStyle: "preserve-3d",
-            position: "absolute",
-            width: "100px",
-            height: "100px",
           }}
         >
           {renderCubies()}
@@ -963,6 +1129,7 @@ const Cube = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Cube;  // Export the Cube component

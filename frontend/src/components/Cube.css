@@ -1,48 +1,82 @@
 .cube-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh; /* Full screen height */
-    background-color: #f4f4f4; /* Light background */
-    perspective: 800px; /* Adds depth to the 3D effect */
-  }
+  position: fixed; /* Ensures it stays in the viewport */
+  top: 50%; /* Vertically center */
+  left: 50%; /* Horizontally center */
+  transform: translate(-50%, -50%); /* Adjusts position to truly center */
+  width: 700px; /* Fixed container width */
+  height: 700px; /* Fixed container height */
+  background-color: #f4f4f4; /* Light background */
+  perspective: 800px; /* Adds depth to the 3D effect */
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  align-items: center; /* Centers content vertically */
+}
 
-  .cube {
-    position: absolute; /* Ensures the cube stays within the container */
-    width: 100px; /* Define a fixed width */
-    height: 100px; /* Define a fixed height */
-    transform-style: preserve-3d; /* Ensures cubies are rendered in 3D */
-    transform-origin: center center; /* Rotate around the center of the cube */
-    transition: transform 0.3s ease-out; /* Smooth transition for rotation */
-  }
-  
+/* When the user is interacting with the cube (dragging) */
+.cube-container:active,
+.cubie-face:active {
+  cursor: grabbing;  /* Change cursor to grabbing when the user is dragging */
+}
 
-.cubie {
-    position: absolute;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform-style: preserve-3d;
-    transition: transform 0.3s ease-in-out; /* ✅ Ensures smooth rotation */
+/* Default cursor when not dragging */
+.cube-container,
+.cubie-face {
+  cursor: grab; /* Show 'grab' cursor when hovering over the cube or faces */
+}
+
+.cube {
+  position: absolute; /* Position inside container */
+  width: 100px; /* Cube width */
+  height: 100px; /* Cube height */
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
 }
 
 
+
+
+.cubie {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+
+
+/* Base arrow styles */
 .rotation-arrow {
-    position: absolute;
-    font-size: 2rem;
-    font-weight: bold;
-    color: red;
-    animation: pulse 1s infinite alternate;
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem; /* Bigger for more visibility */
+  color: rgb(0, 0, 0); /* Black color */
+  z-index: 9999;
+  animation: pulse 1s ease-in-out infinite alternate;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* Adds a glow effect */
+  font-weight: bold;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Smooth scaling pulse animation */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
   }
-  
-  @keyframes pulse {
-    0% { transform: scale(1); opacity: 0.7; }
-    100% { transform: scale(1.3); opacity: 1; }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
   }
+}
+
   
-  /* Position arrows over each face */
+  Position arrows over each face
   .face-U .rotation-arrow { top: 20px; left: 50%; transform: translateX(-50%); }
   .face-D .rotation-arrow { bottom: 20px; left: 50%; transform: translateX(-50%); }
   .face-F .rotation-arrow { top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -51,16 +85,77 @@
   .face-R .rotation-arrow { top: 50%; right: 20px; transform: translateY(-50%); }
   
   .success-message {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: green;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    font-size: 1.5rem;
+    position: fixed; /* Keeps the message in the same place even when scrolling */
+    top: 80%; /* Set the vertical position to be a little lower (adjust percentage as needed) */
+    left: 50%; /* Horizontally center the message */
+    transform: translateX(-50%); /* Center the message */
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 15px 30px; /* Some padding for the message */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 18px; /* Font size */
+    text-align: center; /* Center the text */
+    z-index: 9999; /* Ensure it stays above other content */
   }
   
-
   
+
+/* Container for buttons */
+.button-container {
+  position: fixed; /* Fixes the position of the buttons on the screen */
+  top: 10px; /* Adjust the top position so buttons stay at the top */
+  left: 50%; /* Horizontally center the buttons */
+  transform: translateX(-50%); /* Centering adjustment */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Spacing between buttons */
+  margin-top: 20px;
+  z-index: 10; /* Ensures buttons stay above the cube */
+}
+
+/* General button styling */
+button {
+  padding: 20px 20px; /* Fixed padding */
+  font-size: 15px; /* Fixed font size */
+  border: none;
+  background-color: #007bff; /* Example background color */
+  color: white; /* Text color */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049; /* Slightly darker green */
+  transform: scale(1.05); /* Slight scale-up effect */
+  cursor: pointer;
+}
+
+/* Add different colors for each button for distinction */
+button.scramble {
+  background-color: #ff9800; /* Orange */
+}
+
+button.scramble:hover {
+  background-color: #fb8c00; /* Slightly darker orange */
+}
+
+button.find-solution {
+  background-color: #2196F3; /* Blue */
+}
+
+button.find-solution:hover {
+  background-color: #1976D2; /* Slightly darker blue */
+}
+
+button.guide-me {
+  background-color: #9C27B0; /* Purple */
+}
+
+button.guide-me:hover {
+  background-color: #7b1fa2; /* Slightly darker purple */
+}
+
+button:active {
+  transform: scale(0.95); /* Shrinks the button slightly when clicked */
+}
