@@ -2,6 +2,10 @@
 import React, { useState, useEffect } from "react";
 import "./Cube.css";
 import API_BASE_URL from "../config";
+import UnfoldedCube  from "./UnfoldedCube";
+
+
+
 
 // const defaultColors = {
 //   U: "blue",   // Up
@@ -106,6 +110,8 @@ const Cube = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [guideMode, setGuideMode] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
+  const [manualColorMode, setManualColorMode] = useState(false);
+
 
   
 
@@ -850,7 +856,7 @@ const Cube = () => {
       if (isScrambling) {
         return;
       }
-      
+
       const cubeString = flattenCubeStateByPosition(cubeState);
   
       try {
@@ -1035,7 +1041,104 @@ const Cube = () => {
   };
   
 
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
+
+
+
+  // const UnfoldedCube = ({ cubeState, onChangeColor }) => {
+  //   return (
+  //     <div className="unfolded-cube">
+  //       <div className="face face-U">
+  //         <FaceGrid face="U" cubeState={cubeState} onChangeColor={onChangeColor} />
+  //       </div>
+  //       <div className="face face-L">
+  //         <FaceGrid face="L" cubeState={cubeState} onChangeColor={onChangeColor} />
+  //       </div>
+  //       <div className="face face-F">
+  //         <FaceGrid face="F" cubeState={cubeState} onChangeColor={onChangeColor} />
+  //       </div>
+  //       <div className="face face-R">
+  //         <FaceGrid face="R" cubeState={cubeState} onChangeColor={onChangeColor} />
+  //       </div>
+  //       <div className="face face-B">
+  //         <FaceGrid face="B" cubeState={cubeState} onChangeColor={onChangeColor} />
+  //       </div>
+  //       <div className="face face-D">
+  //         <FaceGrid face="D" cubeState={cubeState} onChangeColor={onChangeColor} />
+  //       </div>
+  //     </div>
+  //   );
+  // };
+  
+  
+// function renderFace(face, cubeState, onChangeColor) {
+//   return (
+//     <div className="face-grid">
+//       {cubeState
+//         .filter((cubie) => cubie.colors[face])
+//         .sort((a, b) => a.id.localeCompare(b.id))
+//         .map((cubie) => {
+//           const hexColor = colorToHex(cubie.colors[face]);
+//           return (
+//             <div 
+//               key={cubie.id} 
+//               className="sticker" 
+//               style={{ backgroundColor: hexColor }}
+//             >
+//               <input
+//                 type="color"
+//                 value={hexColor}
+//                 onChange={(e) => onChangeColor(cubie.id, face, e.target.value)}
+//                 style={{
+//                   /* Make the input cover the entire sticker but remain invisible */
+//                   position: "absolute",
+//                   top: 0,
+//                   left: 0,
+//                   width: "100%",
+//                   height: "100%",
+//                   opacity: 0,
+//                   cursor: "pointer",
+//                 }}
+//               />
+//             </div>
+//           );
+//         })}
+//     </div>
+//   );
+// }
+
+  
+//   const colorToHex = (colorName) => {
+//     const map = {
+//       white: "#ffffff",
+//       yellow: "#ffff00",
+//       blue: "#0000ff",
+//       green: "#006400",
+//       red: "#ff0000",
+//       orange: "#ffa500",
+//     };
+//     return map[colorName] || "#000000";
+//   };
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   // --- RENDERING ---
@@ -1108,27 +1211,55 @@ const Cube = () => {
         <button className="scramble" onClick={scrambleCube}>Scramble</button>
         <button className="find-solution" onClick={handleFindSolution}>Find Solution</button>
         <button className="guide-me" onClick={handleGuideMe}>Guide Me</button>
-      </div>
-      <div
-        className="cube-container"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-
-      >
-        <div
-          className="cube"
-          draggable="false"
-          style={{
-            transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-          }}
+        <button 
+          className="manual-color" 
+          onClick={() => setManualColorMode((prev) => !prev)}
         >
-          {renderCubies()}
-        </div>
+          {manualColorMode ? "Back to 3D Cube" : "Manual Color Pick"}
+        </button>
       </div>
+
+      {manualColorMode ? (
+        <UnfoldedCube
+          cubeState={cubeState}
+          onChangeColor={(cubieId, face, newColor) => {
+            setCubeState((prev) =>
+              prev.map((cubie) =>
+                cubie.id === cubieId
+                  ? {
+                      ...cubie,
+                      colors: { ...cubie.colors, [face]: newColor },
+                    }
+                  : cubie
+              )
+            );
+          }}
+        />
+      ) : (
+        // The existing 3D cube rendering
+        <div
+          className="cube-container"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div
+            className="cube"
+            draggable="false"
+            style={{
+              transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+            }}
+          >
+            {renderCubies()}
+          </div>
+        </div>
+      )}
+
     </div>
   );
+  
+  
   
 };
 

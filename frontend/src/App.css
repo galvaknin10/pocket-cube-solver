@@ -1,17 +1,21 @@
+/* App.css */
+
+/* Body styling */
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  background-color: #f4f4f4;
+  background-color: #2e3a47;
   margin: 0;
   overflow: hidden; /* Prevents both horizontal and vertical scrolling */
 }
 
-
+/* Heading styling */
 h1 {
   font-size: 2.5rem; /* Larger and more prominent */
   font-weight: bold;
   text-transform: uppercase; /* Makes it look sleek */
   letter-spacing: 2px; /* Adds a modern touch */
   margin-bottom: 15px;
-  color: #333; /* Dark gray for a cleaner look */
+  color: #d52424; /* Dark gray for a cleaner look */
 }
+

@@ -1,11 +1,12 @@
 .cube-container {
   position: fixed; /* Ensures it stays in the viewport */
-  top: 50%; /* Vertically center */
+  top: 60%; /* Vertically center */
   left: 50%; /* Horizontally center */
   transform: translate(-50%, -50%); /* Adjusts position to truly center */
   width: 700px; /* Fixed container width */
   height: 700px; /* Fixed container height */
-  background-color: #f4f4f4; /* Light background */
+  background-color: #2e3a47;
+   /* Light background */
   perspective: 800px; /* Adds depth to the 3D effect */
   display: flex;
   justify-content: center; /* Centers content horizontally */
@@ -86,7 +87,7 @@
   
   .success-message {
     position: fixed; /* Keeps the message in the same place even when scrolling */
-    top: 80%; /* Set the vertical position to be a little lower (adjust percentage as needed) */
+    top: 85%; /* Set the vertical position to be a little lower (adjust percentage as needed) */
     left: 50%; /* Horizontally center the message */
     transform: translateX(-50%); /* Center the message */
     background-color: #4CAF50; /* Green background */
@@ -103,7 +104,7 @@
 /* Container for buttons */
 .button-container {
   position: fixed; /* Fixes the position of the buttons on the screen */
-  top: 10px; /* Adjust the top position so buttons stay at the top */
+  top: 100px; /* Adjust the top position so buttons stay at the top */
   left: 50%; /* Horizontally center the buttons */
   transform: translateX(-50%); /* Centering adjustment */
   display: flex;
@@ -158,4 +159,83 @@ button.guide-me:hover {
 
 button:active {
   transform: scale(0.95); /* Shrinks the button slightly when clicked */
+}
+
+
+
+
+.unfolded-cube {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-template-rows: repeat(3, auto);
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Position each face in the net layout */
+.face-B {
+  grid-column: 2; /* second column */
+  grid-row: 1;    /* first row */
+}
+.face-L {
+  grid-column: 1;
+  grid-row: 2;
+}
+.face-U {
+  grid-column: 2;
+  grid-row: 2;
+}
+.face-R {
+  grid-column: 3;
+  grid-row: 2;
+}
+.face-D {
+  grid-column: 4;
+  grid-row: 2;
+}
+.face-F {
+  grid-column: 2;
+  grid-row: 3;
+}
+.face-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+  width: 100%;  /* So it can fill .face */
+  height: 100%;
+}
+
+.face {
+  width: 150px;  /* Adjust as needed */
+  height: 150px;
+  border: 1px solid #000;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 0;   /* Remove padding so grid can fully expand */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.sticker {
+  position: relative; /* So the input can be positioned within it */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 5px solid #161515;
+}
+
+
+
+.color-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: grab;
 }
