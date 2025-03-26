@@ -5,7 +5,7 @@
   transform: translate(-50%, -50%); /* Adjusts position to truly center */
   width: 700px; /* Fixed container width */
   height: 700px; /* Fixed container height */
-  background-color: #2e3a47;
+  background-color: #22272d;
    /* Light background */
   perspective: 800px; /* Adds depth to the 3D effect */
   display: flex;
@@ -113,6 +113,7 @@
   gap: 20px; /* Spacing between buttons */
   margin-top: 20px;
   z-index: 10; /* Ensures buttons stay above the cube */
+
 }
 
 /* General button styling */
@@ -120,10 +121,11 @@ button {
   padding: 20px 20px; /* Fixed padding */
   font-size: 15px; /* Fixed font size */
   border: none;
-  background-color: #007bff; /* Example background color */
+  background-color: #273c50; /* Example background color */
   color: white; /* Text color */
   border-radius: 5px; /* Rounded corners */
   cursor: pointer;
+  text-transform: uppercase;
 }
 
 button:hover {
@@ -134,27 +136,27 @@ button:hover {
 
 /* Add different colors for each button for distinction */
 button.scramble {
-  background-color: #ff9800; /* Orange */
+  background-color: #273c50; /* Orange */
 }
 
 button.scramble:hover {
-  background-color: #fb8c00; /* Slightly darker orange */
+  background-color: #45a049; /* Slightly darker orange */
 }
 
 button.find-solution {
-  background-color: #2196F3; /* Blue */
+  background-color: #273c50; /* Blue */
 }
 
 button.find-solution:hover {
-  background-color: #1976D2; /* Slightly darker blue */
+  background-color: #45a049; /* Slightly darker blue */
 }
 
 button.guide-me {
-  background-color: #9C27B0; /* Purple */
+  background-color: #273c50; /* Purple */
 }
 
 button.guide-me:hover {
-  background-color: #7b1fa2; /* Slightly darker purple */
+  background-color: #45a049; /* Slightly darker purple */
 }
 
 button:active {
@@ -162,15 +164,14 @@ button:active {
 }
 
 
-
-
 .unfolded-cube {
   display: grid;
   grid-template-columns: repeat(4, auto);
   grid-template-rows: repeat(3, auto);
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   align-items: center;
+  margin-top: 160px; 
 }
 
 /* Position each face in the net layout */
@@ -198,20 +199,19 @@ button:active {
   grid-column: 2;
   grid-row: 3;
 }
+
 .face-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
   gap: 2px;
   width: 100%;  /* So it can fill .face */
-  height: 100%;
+  height: 200%;
 }
 
 .face {
   width: 150px;  /* Adjust as needed */
   height: 150px;
-  border: 1px solid #000;
-  background: #f4f4f4;
   margin: 0;
   padding: 0;   /* Remove padding so grid can fully expand */
   box-sizing: border-box;
@@ -225,12 +225,11 @@ button:active {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 5px solid #161515;
 }
 
 
 
-.color-input {
+/* .color-input {
   position: absolute;
   top: 0;
   left: 0;
@@ -238,4 +237,4 @@ button:active {
   height: 100%;
   opacity: 0;
   cursor: grab;
-}
+} */

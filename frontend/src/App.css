@@ -4,7 +4,7 @@
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  background-color: #2e3a47;
+  background-color: #22272d;
   margin: 0;
   overflow: hidden; /* Prevents both horizontal and vertical scrolling */
 }
@@ -16,6 +16,6 @@ h1 {
   text-transform: uppercase; /* Makes it look sleek */
   letter-spacing: 2px; /* Adds a modern touch */
   margin-bottom: 15px;
-  color: #d52424; /* Dark gray for a cleaner look */
+  color: #fdf9f7; /* Dark gray for a cleaner look */
 }
 

@@ -1,20 +1,8 @@
 /* eslint-disable default-case */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Cube.css";
 import API_BASE_URL from "../config";
 import UnfoldedCube  from "./UnfoldedCube";
-
-
-
-
-// const defaultColors = {
-//   U: "blue",   // Up
-//   D: "green",  // Down
-//   F: "orange", // Front
-//   B: "red",    // Back
-//   L: "white",  // Left
-//   R: "yellow", // Right
-// };
 
 
 const initialCubeState = [
@@ -101,7 +89,6 @@ function getLayerFromFaceAndPosition(face, x, y, z) {
 
 const Cube = () => {
   const [cubeState, setCubeState] = useState(initialCubeState);
-  const [shouldSolve, setShouldSolve] = useState(false);
   const [rotation, setRotation] = useState({ x: -30, y: 45 }); // Whole-cube rotation
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -174,6 +161,7 @@ const Cube = () => {
         if (Math.abs(deltaX) > 30) {
           const direction = deltaX > 0 ? 90 : -90;
           rotateLayerCubies(selectedLayer, direction);
+          console.log(cubeState);
           setSelectedLayer(null); // Prevent repeated rotations on same drag
         }
       }
@@ -266,35 +254,37 @@ const Cube = () => {
         const { position, colors } = cubie;
         const [x, y, z] = position;
         let newPosition = [...position];
-        let newColors = { ...colors };
+
+
+        const oldColors = { ...colors };
+        let newColors = {};
+
       
         // Helper function: assign oldFace to newFace if oldFace existed, then delete oldFace
         const reassignFace = (oldFace, newFace) => {
-          if (colors[oldFace]) {
-            newColors[newFace] = colors[oldFace];
-            //delete newColors[oldFace];
+          if (oldColors[oldFace]) {
+            newColors[newFace] = oldColors[oldFace];
           }
         };
+
       
         switch (layer) {
           case "U":
             if (direction > 0) {
-              // +90 around U
               newPosition = [z, y, -x];
-              // Keep U face
-              if (colors.U) newColors.U = colors.U;
+              // Keep the old U color if it existed
+              if (oldColors.U) newColors.U = oldColors.U;
       
-              //F->R, R->B, B->L, L->F
+              // F->R, R->B, B->L, L->F
               reassignFace("F", "R");
               reassignFace("R", "B");
               reassignFace("B", "L");
               reassignFace("L", "F");
             } else {
-              // -90 around U
               newPosition = [-z, y, x];
-              if (colors.U) newColors.U = colors.U;
+              if (oldColors.U) newColors.U = oldColors.U;
       
-              // F->L, L->B, B->R, R->F (the reverse mapping)
+              // F->L, L->B, B->R, R->F
               reassignFace("F", "L");
               reassignFace("L", "B");
               reassignFace("B", "R");
@@ -302,10 +292,14 @@ const Cube = () => {
             }
             break;
       
+          // ...repeat the same pattern for D, F, B, R, L...
+        
+      
           case "D":
             if (direction > 0) {
               newPosition = [z, y, -x];
-              if (colors.D) newColors.D = colors.D;
+              if (oldColors.D) newColors.D = oldColors.D;
+
       
               // F->L, L->B, B->R, R->F (for example)
               reassignFace("F", "R");
@@ -317,7 +311,8 @@ const Cube = () => {
 
             } else {
               newPosition = [-z, y, x];
-              if (colors.D) newColors.D = colors.D;
+              if (oldColors.D) newColors.D = oldColors.D;
+
       
               // F->R, R->B, B->L, L->F
               reassignFace("F", "L");
@@ -330,7 +325,8 @@ const Cube = () => {
           case "F":
             if (direction > 0) {
               newPosition = [y, -x, z];
-              if (colors.F) newColors.F = colors.F;
+              if (oldColors.F) newColors.F = oldColors.F;
+              
       
               // U->L, L->D, D->R, R->U
               reassignFace("R", "D");
@@ -339,7 +335,8 @@ const Cube = () => {
               reassignFace("D", "L");
             } else {
               newPosition = [-y, x, z];
-              if (colors.F) newColors.F = colors.F;
+              if (oldColors.F) newColors.F = oldColors.F;
+              
       
               // U->R, R->D, D->L, L->U
               reassignFace("L", "D");
@@ -352,7 +349,8 @@ const Cube = () => {
           case "B":
             if (direction > 0) {
               newPosition = [-y, x, z];
-              if (colors.B) newColors.B = colors.B;
+              if (oldColors.B) newColors.B = oldColors.B;
+              
       
               // U->R, R->D, D->L, L->U
               reassignFace("L", "D");
@@ -361,7 +359,8 @@ const Cube = () => {
               reassignFace("D", "R");
             } else {
               newPosition = [y, -x, z];
-              if (colors.B) newColors.B = colors.B;
+              if (oldColors.B) newColors.B = oldColors.B;
+              
       
               // U->L, L->D, D->R, R->U
               reassignFace("R", "D");
@@ -374,7 +373,8 @@ const Cube = () => {
           case "R":
             if (direction > 0) {
               newPosition = [x, z, -y];
-              if (colors.R) newColors.R = colors.R;
+              if (oldColors.R) newColors.R = oldColors.R;
+              
       
               // U->F, F->D, D->B, B->U
               reassignFace("F", "U");
@@ -383,7 +383,8 @@ const Cube = () => {
               reassignFace("D", "F");
             } else {
               newPosition = [x, -z, y];
-              if (colors.R) newColors.R = colors.R;
+              if (oldColors.R) newColors.R = oldColors.R;
+              
       
               // U->B, B->D, D->F, F->U
               reassignFace("B", "U");
@@ -396,7 +397,8 @@ const Cube = () => {
           case "L":
             if (direction > 0) {
               newPosition = [x, -z, y];
-              if (colors.L) newColors.L = colors.L;
+              if (oldColors.L) newColors.L = oldColors.L;
+
       
               // U->B, B->D, D->F, F->U
               reassignFace("B", "U");
@@ -405,7 +407,8 @@ const Cube = () => {
               reassignFace("D", "B");
             } else {
               newPosition = [x, z, -y];
-              if (colors.L) newColors.L = colors.L;
+              if (oldColors.L) newColors.L = oldColors.L;
+
       
               // U->F, F->D, D->B, B->U
               reassignFace("F", "U");
@@ -1040,105 +1043,6 @@ const Cube = () => {
     }, 3000);
   };
   
-
-
-
-
-
-
-  // const UnfoldedCube = ({ cubeState, onChangeColor }) => {
-  //   return (
-  //     <div className="unfolded-cube">
-  //       <div className="face face-U">
-  //         <FaceGrid face="U" cubeState={cubeState} onChangeColor={onChangeColor} />
-  //       </div>
-  //       <div className="face face-L">
-  //         <FaceGrid face="L" cubeState={cubeState} onChangeColor={onChangeColor} />
-  //       </div>
-  //       <div className="face face-F">
-  //         <FaceGrid face="F" cubeState={cubeState} onChangeColor={onChangeColor} />
-  //       </div>
-  //       <div className="face face-R">
-  //         <FaceGrid face="R" cubeState={cubeState} onChangeColor={onChangeColor} />
-  //       </div>
-  //       <div className="face face-B">
-  //         <FaceGrid face="B" cubeState={cubeState} onChangeColor={onChangeColor} />
-  //       </div>
-  //       <div className="face face-D">
-  //         <FaceGrid face="D" cubeState={cubeState} onChangeColor={onChangeColor} />
-  //       </div>
-  //     </div>
-  //   );
-  // };
-  
-  
-// function renderFace(face, cubeState, onChangeColor) {
-//   return (
-//     <div className="face-grid">
-//       {cubeState
-//         .filter((cubie) => cubie.colors[face])
-//         .sort((a, b) => a.id.localeCompare(b.id))
-//         .map((cubie) => {
-//           const hexColor = colorToHex(cubie.colors[face]);
-//           return (
-//             <div 
-//               key={cubie.id} 
-//               className="sticker" 
-//               style={{ backgroundColor: hexColor }}
-//             >
-//               <input
-//                 type="color"
-//                 value={hexColor}
-//                 onChange={(e) => onChangeColor(cubie.id, face, e.target.value)}
-//                 style={{
-//                   /* Make the input cover the entire sticker but remain invisible */
-//                   position: "absolute",
-//                   top: 0,
-//                   left: 0,
-//                   width: "100%",
-//                   height: "100%",
-//                   opacity: 0,
-//                   cursor: "pointer",
-//                 }}
-//               />
-//             </div>
-//           );
-//         })}
-//     </div>
-//   );
-// }
-
-  
-//   const colorToHex = (colorName) => {
-//     const map = {
-//       white: "#ffffff",
-//       yellow: "#ffff00",
-//       blue: "#0000ff",
-//       green: "#006400",
-//       red: "#ff0000",
-//       orange: "#ffa500",
-//     };
-//     return map[colorName] || "#000000";
-//   };
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   // --- RENDERING ---

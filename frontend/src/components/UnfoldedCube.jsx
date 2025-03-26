@@ -27,13 +27,13 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           openSticker={openSticker}
           onOpenSticker={handleOpenSticker}
           sortFunction={(a, b) => {
-            const positionOrderL = {
-                "1,1,1": 1,
+            const positionOrderU = {
+                "1,1,1": 3,
                 "-1,1,1": 2,
                 "1,1,-1": 1,
-                "-1,1,-1": 2,
+                "-1,1,-1": 0,
             };
-            return positionOrderL[a.position.join(",")] - positionOrderL[b.position.join(",")];
+            return positionOrderU[a.position.join(",")] - positionOrderU[b.position.join(",")];
             }}
           
         />
@@ -49,9 +49,9 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           onOpenSticker={handleOpenSticker}
           sortFunction={(a, b) => {
             const positionOrderL = {
-                "-1,1,1": 2,
+                "-1,1,1": 3,
                 "-1,1,-1": 1,
-                "-1,-1,1": 1,
+                "-1,-1,1": 2,
                 "-1,-1,-1": 0,
             };
             return positionOrderL[a.position.join(",")] - positionOrderL[b.position.join(",")];
@@ -68,13 +68,13 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           openSticker={openSticker}
           onOpenSticker={handleOpenSticker}
           sortFunction={(a, b) => {
-            const positionOrderL = {
-                "-1,1,1": 2,
-                "-1,1,-1": 1,
-                "-1,-1,1": 1,
-                "-1,-1,-1": 0,
+            const positionOrderF = {
+                "1,1,1": 1,
+                "-1,1,1": 0,
+                "1,-1,1": 3,
+                "-1,-1,1": 2,
             };
-            return positionOrderL[a.position.join(",")] - positionOrderL[b.position.join(",")];
+            return positionOrderF[a.position.join(",")] - positionOrderF[b.position.join(",")];
             }}
         />
       </div>
@@ -88,13 +88,13 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           openSticker={openSticker}
           onOpenSticker={handleOpenSticker}
           sortFunction={(a, b) => {
-            const positionOrderL = {
-                "1,1,1": 3,
+            const positionOrderR = {
+                "1,1,1": 2,
                 "1,-1,1": 3,
-                "1,1,-1": 1,
-                "1,-1,-1": 2,
+                "1,1,-1": 0,
+                "1,-1,-1": 1,
             };
-            return positionOrderL[a.position.join(",")] - positionOrderL[b.position.join(",")];
+            return positionOrderR[a.position.join(",")] - positionOrderR[b.position.join(",")];
             }}
         />
       </div>
@@ -107,6 +107,16 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           onChangeColor={onChangeColor}
           openSticker={openSticker}
           onOpenSticker={handleOpenSticker}
+          sortFunction={(a, b) => {
+            const positionOrderB = {
+                "1,1,-1": 3,
+                "1,-1,-1": 0,
+                "-1,1,-1": 2,
+                "-1,-1,-1": 1,
+            };
+            return positionOrderB[a.position.join(",")] - positionOrderB[b.position.join(",")];
+            }}
+          
         />
       </div>
 
@@ -118,6 +128,15 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           onChangeColor={onChangeColor}
           openSticker={openSticker}
           onOpenSticker={handleOpenSticker}
+          sortFunction={(a, b) => {
+            const positionOrderD = {
+                "1,-1,1": 3,
+                "1,-1,-1": 1,
+                "-1,-1,1": 2,
+                "-1,-1,-1": 0,
+            };
+            return positionOrderD[a.position.join(",")] - positionOrderD[b.position.join(",")];
+            }}
         />
       </div>
     </div>

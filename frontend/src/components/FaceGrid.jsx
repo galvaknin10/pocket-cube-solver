@@ -63,7 +63,6 @@ export default function FaceGrid({
                   top: "100%",
                   left: 0,
                   backgroundColor: "#fff",
-                  border: "1px solid #ccc",
                   padding: "5px",
                   display: "flex",
                   gap: "5px",
@@ -77,7 +76,7 @@ export default function FaceGrid({
                       width: "20px",
                       height: "20px",
                       backgroundColor: opt.hex,
-                      border: "1px solid #ccc",
+                      border: "5px solid #ccc",
                     }}
                     title={opt.name}
                     onClick={(e) => {
