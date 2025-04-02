@@ -5,13 +5,23 @@
   transform: translate(-50%, -50%); /* Adjusts position to truly center */
   width: 700px; /* Fixed container width */
   height: 700px; /* Fixed container height */
-  background-color: #22272d;
+  /*background-color: #f0f0f0;
+  /*background-image: url('https://i.pinimg.com/474x/ce/4b/af/ce4bafbce05156a8787a3036f13f9790.jpg');
+
    /* Light background */
   perspective: 800px; /* Adds depth to the 3D effect */
   display: flex;
   justify-content: center; /* Centers content horizontally */
   align-items: center; /* Centers content vertically */
 }
+
+button, h1 {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
+  user-select: none;         /* Standard syntax */
+}
+
 
 /* When the user is interacting with the cube (dragging) */
 .cube-container:active,
@@ -44,7 +54,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease-in-out;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  will-change: transform, background-color, box-shadow;
+  /* Optionally, add a slight 3D shadow effect for depth */
+
 }
 
 
@@ -85,83 +99,183 @@
   .face-L .rotation-arrow { top: 50%; left: 20px; transform: translateY(-50%); }
   .face-R .rotation-arrow { top: 50%; right: 20px; transform: translateY(-50%); }
   
-  .success-message {
-    position: fixed; /* Keeps the message in the same place even when scrolling */
-    top: 85%; /* Set the vertical position to be a little lower (adjust percentage as needed) */
-    left: 50%; /* Horizontally center the message */
-    transform: translateX(-50%); /* Center the message */
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    padding: 15px 30px; /* Some padding for the message */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 18px; /* Font size */
-    text-align: center; /* Center the text */
-    z-index: 9999; /* Ensure it stays above other content */
-  }
-  
-  
 
+/* Base styles for all messages */
+.message {
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  z-index: 9999;
+  max-width: 80%;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+  width: auto;
+  background-color: #f0f0f5; /* Light background, Apple-like */
+  color: #333; /* Dark text for high contrast */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.guide-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  background-color: #2196f3;
+  color: white;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none; /* Removes underline if any */
+  margin-left: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.guide-button:hover {
+  background-color: #1976d2; /* Darker blue when hovering */
+  transform: translateY(-2px); /* Slight hover effect */
+}
+
+.guide-button:active {
+  transform: translateY(0); /* Reset the hover effect on click */
+}
+
+/* Specific message types */
+.error-message {
+  background-color: #8b848c; /* Red for errors */
+  color: white;
+}
+
+.notice-message {
+  background-color: #8b848c; /* Orange for notices */
+  color: white;
+}
+
+.solution-message {
+  background-color: #8b848c; /* Green for solution */
+  color: white;
+}
+
+.success-message {
+  background-color: #8b848c; /* Blue for success */
+  color: white;
+}
+
+.already-solved-message {
+  background-color: #8b848c; /* Light green for already solved */
+  color: white;
+}
+
+.no-solution-message {
+  background-color: #8b848c; /* Deep orange for no solution */
+  color: white;
+}
+
+.guiding-arrows-message {
+  background-color: #8b848c; /* Purple for guiding arrows */
+  color: white;
+}
+
+.restart-cube-message {
+  background-color: #8b848c; /* Purple for guiding arrows */
+  color: white;
+}
+
+.scramble-cube-message {
+  background-color: #8b848c; /* Purple for guiding arrows */
+  color: white;
+}
+
+
+  
+  
 /* Container for buttons */
 .button-container {
-  position: fixed; /* Fixes the position of the buttons on the screen */
-  top: 100px; /* Adjust the top position so buttons stay at the top */
-  left: 50%; /* Horizontally center the buttons */
-  transform: translateX(-50%); /* Centering adjustment */
+  position: fixed;
+  top: 160px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px; /* Spacing between buttons */
-  margin-top: 20px;
-  z-index: 10; /* Ensures buttons stay above the cube */
-
+  gap: 50px;
+  z-index: 10;
+  padding: 0 10px; /* Optional, helps on smaller screens */
 }
 
-/* General button styling */
 button {
-  padding: 20px 20px; /* Fixed padding */
-  font-size: 15px; /* Fixed font size */
+  padding: 0.75rem 3rem;
+  font-size: 1.5rem;
+  font-weight: bold;
   border: none;
-  background-color: #273c50; /* Example background color */
-  color: white; /* Text color */
-  border-radius: 5px; /* Rounded corners */
+  border-radius: 5px;
   cursor: pointer;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  color: #fff;
+  white-space: nowrap; /* Prevents text from wrapping onto multiple lines */
 }
 
-button:hover {
-  background-color: #45a049; /* Slightly darker green */
-  transform: scale(1.05); /* Slight scale-up effect */
-  cursor: pointer;
+
+button:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Add different colors for each button for distinction */
-button.scramble {
-  background-color: #273c50; /* Orange */
-}
-
-button.scramble:hover {
-  background-color: #45a049; /* Slightly darker orange */
-}
-
-button.find-solution {
-  background-color: #273c50; /* Blue */
-}
-
-button.find-solution:hover {
-  background-color: #45a049; /* Slightly darker blue */
-}
-
-button.guide-me {
-  background-color: #273c50; /* Purple */
-}
-
-button.guide-me:hover {
-  background-color: #45a049; /* Slightly darker purple */
-}
-
+/* Active state for button press feedback */
 button:active {
-  transform: scale(0.95); /* Shrinks the button slightly when clicked */
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* Distinct button colors */
+
+/* Scramble button - Orange */
+button.scramble {
+  background-color: #1f1f1e;
+}
+button.scramble:hover{
+  background-color: #0c109e;
+}
+
+/* Reset button - Red */
+button.reset {
+  background-color: #1f1f1e;
+}
+button.reset:hover {
+  background-color: #0c109e;
+}
+
+/* Find Solution button - Blue */
+button.find-solution {
+  background-color: #1f1f1e;
+}
+button.find-solution:hover{
+  background-color: #0c109e;
+}
+
+/* Guide Me button - Purple */
+button.guide-me {
+  background-color: #1f1f1e;
+}
+button.guide-me:hover{
+  background-color: #0c109e;
+}
+
+button.manual-color {
+  background-color: #1f1f1e;
+}
+button.manual-color:hover {
+  background-color: #0c109e;
+}
+
+
 
 
 .unfolded-cube {
@@ -171,7 +285,7 @@ button:active {
   gap: 8px;
   justify-content: center;
   align-items: center;
-  margin-top: 160px; 
+  margin-top: 120px; 
 }
 
 /* Position each face in the net layout */
@@ -229,12 +343,3 @@ button:active {
 
 
 
-/* .color-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: grab;
-} */

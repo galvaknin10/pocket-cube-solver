@@ -192,13 +192,7 @@ const Cube = () => {
   };
 
 
-      // // Determine arrow direction
-      // let direction = 90;
-      // if (layer === "B" || layer === "L") {
-      //   direction = -90;
-      // }
-    
-
+  
   const handleMouseUp = () => {
     setIsDragging(false);
     setSelectedLayer(null);
@@ -451,10 +445,14 @@ const Cube = () => {
       rotateLayerCubies(randomFace, randomDir);
 
       // Wait for a timeout before the next move (e.g., 300ms between moves)
-      await delay(200); 
+      await delay(1000); 
     }
     setIsScrambling(false); // Scrambling done
+    showScrambleMessage("Scrambling Complete!");
   };
+
+
+
 
   const flattenCubeStateByPosition = (cubeState) => {
     // Convert color strings to single-letter codes
@@ -596,81 +594,6 @@ const Cube = () => {
   };
 
 
-
-
-  // const checkSymmetryAndSolve = async () => {
-  //   // 1) Flatten the user’s current cube state
-  //   console.log("Cube state original format - Before update:" , cubeState);
-  //   const cubeString = flattenCubeStateByPosition(cubeState);
-  //   console.log("Flattened Cube String:", cubeString);
-
-  //   try {
-  //     // 2) Call your /find_symmetry endpoint first
-  //     const res = await fetch(`${API_BASE_URL}/find_symmetry`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ cube_data: cubeString }),
-  //     });
-  //     const data = await res.json();
-      
-  //     if (!data.found) {
-  //       console.log("No matching or symmetrical version found. Cannot solve.");
-  //       return; // or show a UI error
-  //     }
-      
-  //     // If found == true
-  //     if (data.state !== cubeString) {
-  //       // Means we have a symmetrical match that differs from the user's state
-  //       console.log("Server suggests symmetrical reorientation:", data.state);
-  //       // 3) Reorient the cube to that symmetrical version
-  //       reorientCubeFromString(data.state);
-  //     }
-
-  //     else {
-  //       // If no reorientation is needed, we can still trigger the solver:
-  //       setShouldSolve(true);
-  //     }
-
-      
-  //   } catch (err) {
-  //     console.error("Error checking symmetry:", err);
-  //   }
-  // }
-
-  //   // useEffect to call solver after state is updated
-  // useEffect(() => {
-  //   if (shouldSolve) {
-  //     callSolveEndpoint(); // uses the *latest* cubeState
-  //     setShouldSolve(false);
-  //   }
-  // }, [cubeState, shouldSolve]);
-  
-  // Example: callSolveEndpoint references your existing handleSolve logic
-  // const callSolveEndpoint = async () => {
-  //   console.log("Cube state original format - after update:" , cubeState);
-
-  //   const cubeString = flattenCubeStateByPosition(cubeState);
-  //   //const finalString = flattenCubeStateByPosition(cubeState);
-  //   // the existing logic from handleSolve
-  //   console.log("Cube state string - after upadate: ", cubeString);
-
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/solve`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ cube_data: cubeString }),
-  //     });
-  //     const data = await response.json();
-  //     if (!data) {
-  //       console.log("no matching solution found");
-  //       return;
-  //     }
-  //     guideUserThroughSolution(data.solution);
-  //   } catch (error) {
-  //     console.error("Error solving:", error);
-  //   }
-  // };
-  
   
   function createBlankCubeState() {
     return [
@@ -872,15 +795,18 @@ const Cube = () => {
         const symmetryData = await symmetryRes.json();
   
         if (!symmetryData.found) {
-          console.log("No symmetrical version found. Can't solve.");
+          showErrorMessage("Invalid pocket cube. Can't solve.");
           setSolutionSteps(null);
           return;
         }
+
+        let noticeMessage = false;
   
         // If we got a symmetrical match, reorient the cube
         if (symmetryData.state !== cubeString) {
           reorientCubeFromString(symmetryData.state);
-          console.log("notice: cube switch to identical symmetic state - adapt your cube with this symmetrica state")
+          showNoticeMessage("Solution found! Notice: Cube has been switched to an identical symmetric state. Feel free to Adapt your cube to this new orientation and when ready click on Guide Me.");
+          noticeMessage = true;
         }
   
         // Now request the solution steps from /solve
@@ -893,79 +819,74 @@ const Cube = () => {
   
   
         if (solveData.solution[0] === "Congratulations!") {
-          console.log("Cube is already in its solved state");
-          showSuccessMessage();
-          setSolutionSteps(null);
+          showCubeAlreadySolvedMessage("Cube is already in its solved state, nothing do to...");  // Show the success message after the delay
+          setSolutionSteps([]); // Reset solution steps if needed
           return;
+        } else if (!noticeMessage) {
+          showSolutionFoundMessage("Solution found! Click On Guide Me.");
         }
+        
 
         setSolutionSteps(solveData.solution);
 
-        console.log("Solution steps are ready. Click 'Guide Me' to start solving.");
       } catch (err) {
         console.error("Error finding or solving:", err);
       }
     };
+
+    const showMessage = (message, messageType, duration = 3000) => {
+      // Remove any existing messages
+      document.querySelectorAll('.message').forEach(msg => msg.remove());
+    
+      const messageBox = document.createElement("div");
+      messageBox.classList.add(messageType, "message");
+      messageBox.innerText = message.toUpperCase(); // Uppercase the text
+      document.body.appendChild(messageBox);
+    
+      setTimeout(() => {
+        messageBox.remove();
+      }, duration);
+    };
+    
+    // Example message functions
+    const showErrorMessage = (message) => showMessage(message, "error-message", 4000);
+    const showNoticeMessage = (message) => showMessage(message, "notice-message", 15000);
+    const showSolutionFoundMessage = (message) => showMessage(message, "solution-message", 4000);
+    const showSuccessMessage = (message) => showMessage(message, "success-message", 4000);
+    const showCubeAlreadySolvedMessage = (message) => showMessage(message, "already-solved-message", 4000);
+    const showNoSolutionMessage = (message) => showMessage(message, "no-solution-message", 4000);
+    const showGuidingArrowsMessage = (message) => showMessage(message, "guiding-arrows-message", 4000);
+    const showRestartCubeMessage = (message) => showMessage(message, "restart-cube-message", 4000);
+    const showScrambleMessage = (message) => showMessage(message, "scramble-cube-message", 4000);
+
+
+  
+
   
     // 2) "Guide Me" button
     const handleGuideMe = () => {
       if (!solutionSteps || solutionSteps.length === 0) {
-        console.log("No solution steps. Click 'Find Solution' first.");
+        showNoSolutionMessage("No solution steps. Click 'Find Solution' first.");
         return;
       }
       // Start from the first move
       setGuideMode(true);
       setCurrentStepIndex(0);
       showManualStep(0);
+
+      showGuidingArrowsMessage("Follow the guiding arrows to proceed!");
     };
-    
 
 
-  // const guideUserThroughSolution = async (solutionMoves) => {
-  //   for (const layer of solutionMoves) {
-
-  //     if (layer === "Congratulations!") {
-  //       console.log("Done!");
-  //       return;
-  //     }
-
-  //     let direction = 90;
-  //     if (layer === "B" || layer === "L") {
-  //       direction = -90;
-  //     }
-  //     // Show guidance with an arrow
-  //     showArrowOnFace(layer, direction);
-  
-  //     // Wait before animating the move
-  //     await delay(1000);  // 1-second pause before executing the move
-  
-  //     // Perform the rotation (animate and update state)
-  //     rotateLayerCubies(layer, direction);
-  
-  //     // Remove the arrow after the move
-  //     removeArrowFromFace(layer);
-  
-  //     // Wait before moving to the next step
-  //     await delay(1000);
-  //   }
-  
-  //   // Final success message
-  //   showSuccessMessage();
-  // };
-  
 
   const showManualStep = (index) => {
-    // If we’re beyond the last move, show success
-    if (index >= solutionSteps.length) {
-      showSuccessMessage();
-      return;
-    }
-  
-    const layer = solutionSteps[index];
+      const layer = solutionSteps[index];
     // If it's some special marker like "Congratulations!"
     if (layer === "Congratulations!") {
-      showSuccessMessage();
+      showSuccessMessage("Cube Solved!");
       setGuideMode(false);
+      setSolutionSteps([]);
+      // setCurrentStepIndex(0);
       return;
     }
   
@@ -1016,10 +937,7 @@ const Cube = () => {
       });
     }, 200); // Delay of 200ms; adjust as needed
   };
-  
-
-
-  
+    
 
   // Remove arrows from every face in that layer
   const removeArrowsFromLayer = (layer) => {
@@ -1032,17 +950,22 @@ const Cube = () => {
   };
 
 
-  const showSuccessMessage = () => {
-    const messageBox = document.createElement("div");
-    messageBox.classList.add("success-message");
-    messageBox.innerText = "🎉 Cube Solved!";
-    document.body.appendChild(messageBox);
-  
-    setTimeout(() => {
-      messageBox.remove(); // Remove after 3 seconds
-    }, 3000);
+
+  const handleReset = () => {
+    const solvedCubeString = "BBBBGGGGOOOORRRRWWWWYYYY";
+    reorientCubeFromString(solvedCubeString);
+    setCubeState(initialCubeState);
+    setSolutionSteps([]);
+    setIsScrambling(false);
+    setCurrentStepIndex(0);
+    setGuideMode(false);
+    const layers = ["U", "D", "L", "R", "F", "B"];
+    for (const layer of layers) {
+      removeArrowsFromLayer(layer);
+    }
+    
+    showRestartCubeMessage("Restart cube state");
   };
-  
 
 
   // --- RENDERING ---
@@ -1108,13 +1031,23 @@ const Cube = () => {
   };
 
 
+  const colorDict = {
+    "#ffffff": "white",
+    "#ffff00": "yellow",
+    "#0000ff": "blue",
+    "#006400": "green",
+    "#ff0000": "red",
+    "#ffa500": "orange"
+  };
+
 
   return (
     <div>
       <div className="button-container">
-        <button className="scramble" onClick={scrambleCube}>Scramble</button>
-        <button className="find-solution" onClick={handleFindSolution}>Find Solution</button>
-        <button className="guide-me" onClick={handleGuideMe}>Guide Me</button>
+        <button className="scramble" onClick={scrambleCube} disabled={isScrambling || guideMode}>Scramble</button>
+        <button className="find-solution" onClick={handleFindSolution} disabled={guideMode > 0 || isScrambling}>Solve</button>
+        <button className="guide-me" onClick={handleGuideMe} disabled={guideMode || isScrambling}>Guide Me</button>
+        <button className="reset" onClick={handleReset} disabled={cubeState === initialCubeState || isScrambling}>Reset</button>
         <button 
           className="manual-color" 
           onClick={() => setManualColorMode((prev) => !prev)}
@@ -1132,7 +1065,7 @@ const Cube = () => {
                 cubie.id === cubieId
                   ? {
                       ...cubie,
-                      colors: { ...cubie.colors, [face]: newColor },
+                      colors: { ...cubie.colors, [face]: colorDict[newColor] },
                     }
                   : cubie
               )

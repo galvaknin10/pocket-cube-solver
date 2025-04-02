@@ -1,21 +1,28 @@
 /* App.css */
 
 /* Body styling */
+/* Body styling */
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  background-color: #22272d;
+  background-color: #f0f0f0;
   margin: 0;
-  overflow: hidden; /* Prevents both horizontal and vertical scrolling */
+  overflow: hidden;
+  background-image: url('https://i.pinimg.com/474x/ce/4b/af/ce4bafbce05156a8787a3036f13f9790.jpg'); /* Example from Toptal */
+  background-repeat: repeat;
 }
+
 
 /* Heading styling */
 h1 {
-  font-size: 2.5rem; /* Larger and more prominent */
-  font-weight: bold;
-  text-transform: uppercase; /* Makes it look sleek */
-  letter-spacing: 2px; /* Adds a modern touch */
-  margin-bottom: 15px;
-  color: #fdf9f7; /* Dark gray for a cleaner look */
+  font-size: 4rem; /* Slightly larger for better visibility */
+  font-weight: 700; /* Bold weight for emphasis */
+  text-transform: uppercase; /* Maintains the sleek look */
+  letter-spacing: 4px; /* Increased letter-spacing for more modern appearance */
+  margin-bottom: 20px; /* Slightly larger bottom margin for better spacing */
+  color: #1f1f1e; /* Darker gray for better contrast and readability */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  line-height: 1.2; /* Ensures better readability and vertical spacing */
 }
+
 

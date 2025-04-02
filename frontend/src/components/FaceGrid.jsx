@@ -7,6 +7,7 @@ const colorOptions = [
   { name: "Orange", hex: "#ffa500" },
 ];
 
+
 export default function FaceGrid({
   face,
   cubeState,
@@ -99,7 +100,7 @@ function colorToHex(color) {
   if (color.startsWith("#")) return color;
   const map = {
     white: "#ffffff",
-    yellow: "#ffff00",
+    yellow: "#ffea00",
     blue: "#0000ff",
     green: "#006400",
     red: "#ff0000",
