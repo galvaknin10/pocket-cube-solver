@@ -26,5 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Python-related files
+venv/
 __pycache__/
 *.pyc

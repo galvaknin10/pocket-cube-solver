@@ -4,3 +4,4 @@ numpy
 requests
 pydantic
 gdown
+pytest
