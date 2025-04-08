@@ -1,7 +1,4 @@
-/* App.css */
-
-/* Body styling */
-/* Body styling */
+/* Global body styling: background image, font, and layout reset */
 body {
   font-family: Arial, sans-serif;
   text-align: center;
@@ -12,17 +9,16 @@ body {
   background-repeat: repeat;
 }
 
-
 /* Heading styling */
 h1 {
-  font-size: 4rem; /* Slightly larger for better visibility */
-  font-weight: 700; /* Bold weight for emphasis */
-  text-transform: uppercase; /* Maintains the sleek look */
-  letter-spacing: 4px; /* Increased letter-spacing for more modern appearance */
-  margin-bottom: 20px; /* Slightly larger bottom margin for better spacing */
-  color: #1f1f1e; /* Darker gray for better contrast and readability */
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  line-height: 1.2; /* Ensures better readability and vertical spacing */
+  font-size: 4rem; 
+  font-weight: 700;
+  text-transform: uppercase; 
+  letter-spacing: 4px; 
+  margin-bottom: 20px; 
+  color: #1f1f1e;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  line-height: 1.2; 
 }
 
 

@@ -1,3 +1,4 @@
+// List of selectable colors with readable names
 const colorOptions = [
   { name: "White", hex: "#ffffff" },
   { name: "Yellow", hex: "#ffff00" },
@@ -7,7 +8,7 @@ const colorOptions = [
   { name: "Orange", hex: "#ffa500" },
 ];
 
-
+// Grid for one cube face with interactive color pickers
 export default function FaceGrid({
   face,
   cubeState,
@@ -19,12 +20,8 @@ export default function FaceGrid({
   // Filter stickers for this face
   const faceStickers = cubeState.filter((cubie) => cubie.colors[face]);
 
-  // Apply custom sort if provided, otherwise fallback to default
-  if (sortFunction) {
-    faceStickers.sort(sortFunction);
-  } else {
-    faceStickers.sort((a, b) => a.id.localeCompare(b.id));
-  }
+   // Sort stickers by a provided function
+  faceStickers.sort(sortFunction);
 
   const handleStickerClick = (cubieId) => {
     // Let parent manage which sticker is open
@@ -95,7 +92,7 @@ export default function FaceGrid({
   );
 }
 
-// If storing hex codes in state, make sure we can handle them
+// Normalize color names to hex codes
 function colorToHex(color) {
   if (color.startsWith("#")) return color;
   const map = {

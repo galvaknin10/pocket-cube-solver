@@ -21,4 +21,4 @@ services:
     environment:
       - REACT_APP_BACKEND_URL=http://localhost:8000
     depends_on:
-      - backend  # ✅ Keep only this dependency to fix the cycle
+      - backend 

@@ -1,48 +1,58 @@
-from .load_data import TREE_DATA  
-from .pocket_cube import Pocket_Cube  
+# solve.py — Handles solving a cube state by tracing back to the root state using precomputed tree data
+
+from app.services.load_data import TREE_DATA
 
 def solve_cube(curr_state: str):
-    """Finds the solution path by backtracking from the given state."""
+    """
+    Finds the solution path for a given cube state by backtracking through TREE_DATA.
 
-    # print(f"THREE DATA: {list(TREE_DATA.keys())[:5]}")
-    # print(f"user state: {user_state}")
+    Args:
+        curr_state (str): The current scrambled cube state.
 
-    # print("test")
+    Returns:
+        dict: A dictionary with the solution path as a list of move labels,
+              or None if the state is invalid.
+    """
 
-    # if "BBBBGGGGYYOOWWRROOWWRRYY" in TREE_DATA:
-    #     print("ofcourse")
-    # else: 
-    #     print("NOOOOO")
-
-    print(f"CURR STATE: {curr_state}")
     document = TREE_DATA.get(curr_state)
-    print(document)
+
+    # Define the solved state of the cube (goal)
     soloution_state = "BBBBGGGGOOOORRRRWWWWYYYY"
-
-    # print("user cube: ", user_cube.hash_rep())
-
-    
     path = []
-    print(f'CUBE STATE: {curr_state}')
+
+    # Backtrack from the current state to the solution root
     while curr_state != soloution_state:
-        print("nice")
+
+        # Get the action that led to this state
         action_to_parent = document.get("action")
-        print(action_to_parent)
+
+        # Convert backend action description into a readable layer name for the frontend
         layer = translate_action_to_layer(action_to_parent)
-        print(layer)
         path.append(layer)
 
+        # Move to the parent node in the solution tree
         curr_state = document.get("parent")
         if curr_state in TREE_DATA:
             document = TREE_DATA.get(curr_state)
         else:
+            # If the parent is missing, return None (likely invalid state)
             return
 
     path.append("Congratulations!")
 
     return { "solution": path }
 
+
 def translate_action_to_layer(action):
+    """
+    Maps descriptive actions from the tree data to standard cube layer notation.
+
+    Args:
+        action (str): The string describing the move (e.g., "rotate_top").
+
+    Returns:
+        str: A single-character representing the layer (U, D, F, B, L, or R).
+    """
     if "top" in action:
         return "U"
     elif "bottom" in action:
@@ -55,4 +65,5 @@ def translate_action_to_layer(action):
         return "L"
     else:
         return "R"
+
     

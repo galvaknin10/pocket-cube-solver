@@ -110,9 +110,9 @@ export default function UnfoldedCube({ cubeState, onChangeColor }) {
           sortFunction={(a, b) => {
             const positionOrderB = {
                 "1,1,-1": 3,
-                "1,-1,-1": 0,
+                "1,-1,-1": 1,
                 "-1,1,-1": 2,
-                "-1,-1,-1": 1,
+                "-1,-1,-1": 0,
             };
             return positionOrderB[a.position.join(",")] - positionOrderB[b.position.join(",")];
             }}
