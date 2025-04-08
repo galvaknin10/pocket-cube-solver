@@ -172,18 +172,29 @@ const Cube = () => {
      * @param {number} duration - How long to display the message (in milliseconds).
      */
     const showMessage = (message, messageType, duration = 3000) => {
-      // Remove any existing messages
-      document.querySelectorAll('.message').forEach(msg => msg.remove());
+      // Only remove other messages (not fun-fact ones)
+      if (messageType !== "fun-fact-message") {
+        document.querySelectorAll('.message').forEach(msg => msg.remove());
+      }
     
       const messageBox = document.createElement("div");
-      messageBox.classList.add(messageType, "message");
-      messageBox.innerText = message.toUpperCase(); // Uppercase the text
+    
+      if (messageType === "fun-fact-message") {
+        messageBox.classList.add("fun-fact-message");
+      } else {
+        messageBox.classList.add("message", messageType);
+      }
+    
+      messageBox.innerText = message.toUpperCase();
       document.body.appendChild(messageBox);
     
+      // Remove all messages after their specific duration
       setTimeout(() => {
         messageBox.remove();
       }, duration);
     };
+    
+    
     
     // Shortcut functions for different types of messages
     const showErrorMessage = (message) => showMessage(message, "error-message", 4000);
@@ -194,7 +205,9 @@ const Cube = () => {
     const showNoSolutionMessage = (message) => showMessage(message, "no-solution-message", 4000);
     const showGuidingArrowsMessage = (message) => showMessage(message, "guiding-arrows-message", 4000);
     const showRestartCubeMessage = (message) => showMessage(message, "restart-cube-message", 4000);
-    const showScrambleMessage = (message) => showMessage(message, "scramble-cube-message", 4000);
+    const showScrambleMessage = (message) => showMessage(message, "scramble-cube-message", 7000);
+    const showFunFactMessage = (message) => showMessage(message, "fun-fact-message", 20000);
+
 
     /**
      * Handles the "Guide Me" button click.
@@ -319,6 +332,31 @@ const Cube = () => {
     showRestartCubeMessage("Restart cube state");
   };
 
+
+    const handleFunFact = async () => {
+    try {
+      const res = await fetch("http://localhost:8003/fun-fact");
+      const data = await res.json();
+  
+      if (data.fact) {
+        showFunFactMessage(data.fact);
+      } else if (data.error) {
+        // Check if it's a quota issue
+        if (data.error.includes("quota") || data.error.includes("exceeded")) {
+          showNoticeMessage("The AI is getting a little overwhelmed. Try again later!");
+        } else {
+          showErrorMessage("Gemini AI Error: " + data.error);
+        }
+      } else {
+        showErrorMessage("Unexpected response from AI.");
+      }
+    } catch (err) {
+      showErrorMessage("Failed to fetch fun fact.");
+      console.error(err);
+    }
+    };
+  
+
     // Renders all cubies (each small cube) in the cubeState
     const renderCubies = () =>
     cubeState.map((cubie) => {
@@ -434,6 +472,13 @@ const Cube = () => {
           disabled={guideMode}
         >
           {manualColorMode ? "Back to 3D Cube" : "Manual Color Pick"}
+        </button>
+
+        <button 
+            className="fun-fact"
+            onClick={handleFunFact}
+            >
+            Gemini Insight 🔮
         </button>
       </div>
   

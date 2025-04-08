@@ -42,8 +42,9 @@ export const scrambleCube = async (
     rotateLayerCubies,
     setIsScrambling,
     showScrambleMessage,
-    scrambleLength = 15
+    scrambleLength = 20
   ) => {
+    showScrambleMessage("This might take a moment... check out some gemini insights in the meantime");
     const faces = ["U", "D", "L", "R", "F", "B"];
     const directions = [90, -90];
   
