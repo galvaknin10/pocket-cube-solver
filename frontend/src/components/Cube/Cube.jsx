@@ -4,7 +4,7 @@
  * Main component responsible for rendering the 3D Pocket Cube simulation.
  * Handles UI modes (3D vs manual input), state management, and user interaction.
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Cube.css";import API_BASE_URL from '../../config';
 import UnfoldedCube from "../UnfoldedCube";
 import { scrambleCube, flattenCubeStateByPosition, reorientCubeFromString } from "./CubeUtils";
@@ -113,6 +113,7 @@ const Cube = () => {
      */
     const handleFindSolution = async () => {
         const cubeString = flattenCubeStateByPosition(cubeState);
+        console.log(cubeString);
     
         try {
         // Step 1: Check if current cube state (or its symmetrical variant) exists in DB
@@ -147,6 +148,7 @@ const Cube = () => {
         });
     
         const solveData = await solveRes.json();
+        console.log(solveData.solution);
     
         // Step 4: Handle result - either already solved or solution found
         if (solveData.solution[0] === "Congratulations!") {
@@ -427,6 +429,29 @@ const Cube = () => {
     "#ff0000": "red",
     "#ffa500": "orange",
   };
+
+
+// Expose a helper to set the cube state externally (used in tests)
+useEffect(() => {
+  window.setCubeStateFromTest = (flatStateString) => {
+    reorientCubeFromString(flatStateString, setCubeState);
+  };
+}, []);
+
+// Expose a helper to set solution steps externally (used in tests)
+useEffect(() => {
+  window.setSolutionStepsFromTest = (steps) => {
+    setSolutionSteps(steps);
+  };
+}, []);
+
+// Expose helpers for tests: set steps and trigger a manual rotation step
+useEffect(() => {
+  window.setSolutionStepsFromTest = (steps) => setSolutionSteps(steps);
+  window.handleUserRotationDone = () => handleUserRotationDone();
+}, [solutionSteps, currentStepIndex]);
+
+  
   
     // Render the full Cube component UI:
     // Includes buttons, 3D cube or manual color grid, and user interaction handlers.

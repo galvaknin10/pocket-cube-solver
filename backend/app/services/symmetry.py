@@ -1,7 +1,6 @@
-from app.services.load_data import TREE_DATA  
 from app.services.pocket_cube import Pocket_Cube  
 
-def find_symmetric_state(cube_state: str):
+def find_symmetric_state(cube_state: str, TREE_DATA: dict):
     """
     Checks if the given user_state is in TREE_DATA directly.
     If not, tries all symmetrical rotations.

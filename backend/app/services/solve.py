@@ -1,8 +1,6 @@
 # solve.py — Handles solving a cube state by tracing back to the root state using precomputed tree data
 
-from app.services.load_data import TREE_DATA
-
-def solve_cube(curr_state: str):
+def solve_cube(curr_state: str, TREE_DATA: dict):
     """
     Finds the solution path for a given cube state by backtracking through TREE_DATA.
 
@@ -13,7 +11,6 @@ def solve_cube(curr_state: str):
         dict: A dictionary with the solution path as a list of move labels,
               or None if the state is invalid.
     """
-
     document = TREE_DATA.get(curr_state)
 
     # Define the solved state of the cube (goal)
