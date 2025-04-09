@@ -1,32 +1,47 @@
+# =========================
 # Node.js dependencies
+# =========================
 /node_modules
 /frontend/node_modules
+
+# =========================
+# Package manager settings
+# =========================
 /.pnp
 .pnp.js
-frontend/build/
 
-
-# Testing
+# =========================
+# Testing output
+# =========================
 /coverage
 
-# Production build
+# =========================
+# Production build folders
+# =========================
 /build
+/frontend/build
 
-# Miscellaneous
-.DS_Store
+# =========================
+# Environment files
+# =========================
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-cube-ai-agent/.env
+cube-ai-agent/.env  # service-specific env file
 
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Python-related files
+# =========================
+# Python virtual environment & caches
+# =========================
 venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# =========================
+# Miscellaneous system files & logs
+# =========================
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
