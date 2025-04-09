@@ -1,5 +1,18 @@
 # solve.py — Handles solving a cube state by tracing back to the root state using precomputed tree data
 
+
+# Mapping of compressed integer values back to standard cube move notations.
+# These values are used when decoding actions from the preprocessed .pkl file
+# so they can be sent to the frontend in a readable format.
+INT_TO_ACTION = {
+    0: "U",
+    1: "D",
+    2: "F",
+    3: "B",
+    4: "L",
+    5: "R"
+}
+
 def solve_cube(curr_state: str, TREE_DATA: dict):
     """
     Finds the solution path for a given cube state by backtracking through TREE_DATA.
@@ -24,7 +37,7 @@ def solve_cube(curr_state: str, TREE_DATA: dict):
         action_to_parent = document.get("action")
 
         # Convert backend action description into a readable layer name for the frontend
-        layer = translate_action_to_layer(action_to_parent)
+        layer = INT_TO_ACTION[action_to_parent]
         path.append(layer)
 
         # Move to the parent node in the solution tree
@@ -40,27 +53,6 @@ def solve_cube(curr_state: str, TREE_DATA: dict):
     return { "solution": path }
 
 
-def translate_action_to_layer(action):
-    """
-    Maps descriptive actions from the tree data to standard cube layer notation.
 
-    Args:
-        action (str): The string describing the move (e.g., "rotate_top").
-
-    Returns:
-        str: A single-character representing the layer (U, D, F, B, L, or R).
-    """
-    if "top" in action:
-        return "U"
-    elif "bottom" in action:
-        return "D"
-    elif "most" in action:
-        return "F"
-    elif "less" in action:
-        return "B"
-    elif "right" in action:
-        return "L"
-    else:
-        return "R"
 
     
