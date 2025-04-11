@@ -26,6 +26,8 @@ def solve_cube(curr_state: str):
         dict: A dictionary with the solution path as a list of move labels,
               or None if the state is invalid.
     """
+
+    # Retrieve the document matching the current cube state
     document = get_document(curr_state)
 
     # Define the solved state of the cube (goal)

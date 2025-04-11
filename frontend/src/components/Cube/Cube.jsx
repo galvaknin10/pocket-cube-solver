@@ -82,6 +82,8 @@ const Cube = () => {
     const [guideMode, setGuideMode] = useState(false);
     const [isScrambling, setIsScrambling] = useState(false);
     const [manualColorMode, setManualColorMode] = useState(false);
+    const [isSolving, setIsSolving] = useState(false);
+
 
     /**
      * Handles a 90-degree rotation of a specific cube layer.
@@ -113,7 +115,7 @@ const Cube = () => {
      */
     const handleFindSolution = async () => {
         const cubeString = flattenCubeStateByPosition(cubeState);
-        console.log(cubeString);
+        setIsSolving(true); // Start loading
     
         try {
         // Step 1: Check if current cube state (or its symmetrical variant) exists in DB
@@ -163,6 +165,8 @@ const Cube = () => {
     
         } catch (err) {
         console.error("Error finding or solving:", err);
+        } finally {
+          setIsSolving(false); // Stop loading
         }
     };
 
@@ -456,82 +460,48 @@ useEffect(() => {
     // Render the full Cube component UI:
     // Includes buttons, 3D cube or manual color grid, and user interaction handlers.
     return (
-    <div>
-      {/* --- BUTTONS PANEL --- */}
-      <div className="button-container">
-        <button 
-          className="scramble" 
-          onClick={handleScramble} 
-          disabled={isScrambling || guideMode}
-        >
-          Scramble
-        </button>
-  
-        <button 
-          className="find-solution" 
-          onClick={handleFindSolution} 
-          disabled={guideMode > 0 || isScrambling}
-        >
-          Solve
-        </button>
-  
-        <button 
-          className="guide-me" 
-          onClick={handleGuideMe} 
-          disabled={guideMode || isScrambling}
-        >
-          Guide Me
-        </button>
-  
-        <button 
-          className="reset" 
-          onClick={handleReset} 
-          disabled={cubeState === initialCubeState || isScrambling}
-        >
-          Reset
-        </button>
-  
-        <button 
-          className="manual-color" 
-          onClick={() => setManualColorMode((prev) => !prev)}
-          disabled={guideMode}
-        >
-          {manualColorMode ? "Back to 3D Cube" : "Manual Color Pick"}
-        </button>
+      <div>
+        {isSolving && (
+          <div className="spinner-overlay">
+            <div className="spinner"></div>
+            <p className="spinner-text">Hang tight! We're solving your cube — meanwhile, why not check a Gemini Insight?</p>
 
-        <button 
-            className="fun-fact"
-            onClick={handleFunFact}
-            >
-            Gemini Insight 🔮
-        </button>
-      </div>
-  
-      {/* --- CUBE VIEW --- */}
-      {manualColorMode ? (
-        // Manual color selection mode (2D unfolded cube)
-        <UnfoldedCube
-          cubeState={cubeState}
-          onChangeColor={(cubieId, face, newColor) => {
-            setCubeState((prev) =>
-              prev.map((cubie) =>
-                cubie.id === cubieId
-                  ? {
-                      ...cubie,
-                      colors: { ...cubie.colors, [face]: colorDict[newColor] },
-                    }
-                  : cubie
-              )
-            );
-          }}
-        />
-      ) : (
-        // Interactive 3D cube view
-        <div
-        className="cube-container"
+          </div>
+        )}
+    
+        {/* --- BUTTONS PANEL --- */}
+        <div className="button-container">
+          <button className="scramble" onClick={handleScramble} disabled={isScrambling || guideMode || isSolving}>Scramble</button>
+          <button className="find-solution" onClick={handleFindSolution} disabled={guideMode > 0 || isScrambling || isSolving}>Solve</button>
+          <button className="guide-me" onClick={handleGuideMe} disabled={guideMode || isScrambling || isSolving}>Guide Me</button>
+          <button className="reset" onClick={handleReset} disabled={cubeState === initialCubeState || isScrambling || isSolving}>Reset</button>
+          <button className="manual-color" onClick={() => setManualColorMode((prev) => !prev)} disabled={guideMode || isSolving}>
+            {manualColorMode ? "Back to 3D Cube" : "Manual Color Pick"}
+          </button>
+          <button className="fun-fact" onClick={handleFunFact}>Gemini Insight 🔮</button>
+        </div>
+    
+        {/* --- CUBE VIEW --- */}
+        {manualColorMode ? (
+          <UnfoldedCube
+            cubeState={cubeState}
+            onChangeColor={(cubieId, face, newColor) => {
+              setCubeState((prev) =>
+                prev.map((cubie) =>
+                  cubie.id === cubieId
+                    ? { ...cubie, colors: { ...cubie.colors, [face]: colorDict[newColor] } }
+                    : cubie
+                )
+              );
+            }}
+          />
+        ) : (
+          <div
+          
+            className="cube-container"
             onMouseDown={(e) => handleMouseDown(e, setSelectedLayer, setDragStart, setIsDragging)}
             onMouseMove={(e) =>
-            handleMouseMove(e, {
+              handleMouseMove(e, {
                 isDragging,
                 dragStart,
                 setRotation,
@@ -544,24 +514,25 @@ useEffect(() => {
                 solutionSteps,
                 currentStepIndex,
                 handleUserRotationDone,
-            })
+              })
             }
             onMouseUp={() => handleMouseUp(setIsDragging, setSelectedLayer)}
             onMouseLeave={() => handleMouseLeave(setIsDragging, setSelectedLayer)}
-        >
-          <div
-            className="cube"
-            draggable="false"
-            style={{
-              transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-            }}
           >
-            {renderCubies()}
+            {isSolving && <div className="cube-lock-overlay"></div>}
+            <div
+              className="cube"
+              draggable="false"
+              style={{
+                transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+              }}
+            >
+              {renderCubies()}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );    
 }
 
 // Export the main Cube component
