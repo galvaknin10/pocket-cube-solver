@@ -30,6 +30,12 @@ GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemin
 class Prompt(BaseModel):
     prompt: str = "Give me a fun fact about the Pocket Cube or Rubik's Cube."
 
+
+# Basic health check route
+@app.get("/")
+def read_root():
+    return {"message": "Pocket Cube Solver ai API is running"}
+
 # Endpoint that returns a fun fact using Gemini API
 @app.get("/fun-fact")
 def get_fun_fact():
