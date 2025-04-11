@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/pocket-cube-solver/static/css/main.f00c7160.css",
-    "main.js": "/pocket-cube-solver/static/js/main.a1d7a836.js",
+    "main.js": "/pocket-cube-solver/static/js/main.261b5054.js",
     "static/js/453.8ab44547.chunk.js": "/pocket-cube-solver/static/js/453.8ab44547.chunk.js",
     "index.html": "/pocket-cube-solver/index.html",
     "main.f00c7160.css.map": "/pocket-cube-solver/static/css/main.f00c7160.css.map",
-    "main.a1d7a836.js.map": "/pocket-cube-solver/static/js/main.a1d7a836.js.map",
+    "main.261b5054.js.map": "/pocket-cube-solver/static/js/main.261b5054.js.map",
     "453.8ab44547.chunk.js.map": "/pocket-cube-solver/static/js/453.8ab44547.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f00c7160.css",
-    "static/js/main.a1d7a836.js"
+    "static/js/main.261b5054.js"
   ]
 }
