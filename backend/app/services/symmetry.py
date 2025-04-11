@@ -1,6 +1,7 @@
 from app.services.pocket_cube import Pocket_Cube  
+from app.services.mongo_client import get_document
 
-def find_symmetric_state(cube_state: str, TREE_DATA: dict):
+def find_symmetric_state(cube_state: str):
     """
     Checks if the given user_state is in TREE_DATA directly.
     If not, tries all symmetrical rotations.
@@ -8,7 +9,8 @@ def find_symmetric_state(cube_state: str, TREE_DATA: dict):
     """
 
     # 1) Check direct match
-    if cube_state in TREE_DATA:
+    document = get_document(cube_state)
+    if document:
         # It's directly in the DB, so no reorientation needed
         return { 
             "found": True, 
@@ -24,10 +26,10 @@ def find_symmetric_state(cube_state: str, TREE_DATA: dict):
     # 3) Try symmetrical versions
     possible_rotations = cube.normalize_cube_by_symmetry()
     for rotation in possible_rotations:
-        if rotation in TREE_DATA:
+        document = get_document(rotation)
+        if document:
             # Found a symmetrical match
-            # We can optionally get 'document = TREE_DATA.get(rotation)' if needed,
-            # but the actual key we want to solve with is 'rotation'.
+
             return { 
                 "found": True, 
                 "state": rotation, 

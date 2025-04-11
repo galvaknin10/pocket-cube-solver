@@ -5,3 +5,5 @@ requests
 pydantic
 gdown
 pytest
+pymongo
+python-dotenv

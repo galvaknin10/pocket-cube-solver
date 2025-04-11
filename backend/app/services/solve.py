@@ -1,3 +1,5 @@
+from app.services.mongo_client import get_document
+
 # solve.py — Handles solving a cube state by tracing back to the root state using precomputed tree data
 
 
@@ -13,7 +15,7 @@ INT_TO_ACTION = {
     5: "R"
 }
 
-def solve_cube(curr_state: str, TREE_DATA: dict):
+def solve_cube(curr_state: str):
     """
     Finds the solution path for a given cube state by backtracking through TREE_DATA.
 
@@ -24,7 +26,7 @@ def solve_cube(curr_state: str, TREE_DATA: dict):
         dict: A dictionary with the solution path as a list of move labels,
               or None if the state is invalid.
     """
-    document = TREE_DATA.get(curr_state)
+    document = get_document(curr_state)
 
     # Define the solved state of the cube (goal)
     soloution_state = "BBBBGGGGOOOORRRRWWWWYYYY"
@@ -42,11 +44,10 @@ def solve_cube(curr_state: str, TREE_DATA: dict):
 
         # Move to the parent node in the solution tree
         curr_state = document.get("parent")
-        if curr_state in TREE_DATA:
-            document = TREE_DATA.get(curr_state)
-        else:
-            # If the parent is missing, return None (likely invalid state)
-            return
+        document = get_document(curr_state)
+        if not document:
+            return   # If the parent is missing, return None (likely invalid state)
+            
 
     path.append("Congratulations!")
 

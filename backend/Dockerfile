@@ -14,8 +14,8 @@ RUN pip install gdown
 # Ensure the /data directory exists
 RUN mkdir -p /data
 
-# Download the large file from Google Drive
-RUN gdown --id 1dazUXOyw2vircXC_qz4YF2X9Sa4CW98D -O /data/tree_data.pkl --fuzzy
+# # Download the large file from Google Drive
+# RUN gdown --id 1dazUXOyw2vircXC_qz4YF2X9Sa4CW98D -O /data/tree_data.pkl --fuzzy
 
 # Copy the backend code
 COPY . .
