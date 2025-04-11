@@ -341,7 +341,7 @@ const Cube = () => {
 
     const handleFunFact = async () => {
     try {
-      const res = await fetch("http://localhost:8003/fun-fact");
+      const res = await fetch("https://pocket-cube-solver-ai-service.onrender.com");
       const data = await res.json();
   
       if (data.fact) {
