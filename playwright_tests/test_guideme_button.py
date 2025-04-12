@@ -5,7 +5,8 @@ def test_guide_me_without_solution():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+
 
         # Ensure solutionSteps is empty
         page.evaluate("window.setSolutionStepsFromTest([])")
@@ -25,7 +26,8 @@ def test_guide_me_with_solution_steps():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+
 
         # Inject a valid solution path
         page.evaluate("""
@@ -50,7 +52,8 @@ def test_guide_me_with_finish_process():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+        
 
         # Inject cube state and a solution that ends with "Congratulations!"
         page.evaluate("window.setCubeStateFromTest('WWBBYYGGOOOORRRRGWGWYBYB')")

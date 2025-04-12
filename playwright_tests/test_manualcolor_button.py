@@ -5,7 +5,8 @@ def test_manual_color_pick_toggle():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+
 
         # Click the "Manual Color Pick" button to enable 2D mode
         manual_btn = page.locator("button.manual-color")

@@ -5,7 +5,8 @@ def test_scramble_button_and_messages():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+
 
         # Click the "Scramble" button
         page.locator("button.scramble").click()

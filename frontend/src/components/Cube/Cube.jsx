@@ -5,12 +5,13 @@
  * Handles UI modes (3D vs manual input), state management, and user interaction.
  */
 import React, { useState, useEffect } from "react";
-import "../Cube.css";import API_BASE_URL from '../../config';
+import "../Cube.css";
 import UnfoldedCube from "../UnfoldedCube";
 import { scrambleCube, flattenCubeStateByPosition, reorientCubeFromString } from "./CubeUtils";
 import rotateLayerCubies from "./CubeTransformer";
 import {handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave,} from "./CubeLogic";
-  
+import { API_BASE_URL, API_BASE_AI_URL } from '../config';
+
 
 // Default solved state of the cube (used for initial load and reset)
 // Each cubie is defined by its 3D position and the color on each visible face
@@ -341,7 +342,7 @@ const Cube = () => {
 
     const handleFunFact = async () => {
     try {
-      const res = await fetch("https://pocket-cube-solver-ai-service.onrender.com/fun-fact");
+      const res = await fetch(`${API_BASE_AI_URL}/fun-fact`);
       const data = await res.json();
   
       if (data.fact) {

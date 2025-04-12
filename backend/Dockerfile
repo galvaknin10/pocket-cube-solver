@@ -8,9 +8,6 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install gdown to download files from Google Drive
-RUN pip install gdown
-
 # Ensure the /data directory exists
 RUN mkdir -p /data
 

@@ -7,7 +7,8 @@ def test_gemini_insight_button_success():
         page = browser.new_page()
 
         # Open the frontend app
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+
 
         # Trigger the Gemini fun fact request
         page.locator("button.fun-fact").click()

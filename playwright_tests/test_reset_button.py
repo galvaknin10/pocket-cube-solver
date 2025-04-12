@@ -5,7 +5,8 @@ def test_reset_button_resets_state():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
+        
 
         # Simulate a scrambled cube and active solution steps
         page.evaluate("""

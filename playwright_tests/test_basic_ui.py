@@ -7,7 +7,7 @@ def test_frontend_homepage():
         page = browser.new_page()
 
         # Navigate to the local frontend app
-        page.goto("http://localhost:3000")
+        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
 
         # Assert the page title contains the expected text
         assert "Pocket Cube Simulator" in page.title()
