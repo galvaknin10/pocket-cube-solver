@@ -40,7 +40,7 @@ FastAPI Backend (Render)
 MongoDB Data / PKL File
    ↓
 Gemini AI Service (Render)
-
+```
 ---
 
 ## Local Setup
@@ -48,7 +48,8 @@ Gemini AI Service (Render)
 ```bash
 git clone https://github.com/galvaknin10/pocket-cube-solver.git
 cd pocket-cube-solver
-⚙️ Config Update (for local development)
+```
+Config Update (for local development)
 If you're running the backend and AI services locally, update the API URLs inside:
 
 frontend/src/config.js
@@ -57,9 +58,10 @@ export const API_BASE_AI_URL = "http://localhost:8003";  // Gemini AI service
 
 Then start the project:
 
-bash
+```bash
 Copy code
 docker-compose up --build
+```
 
 ---
 
