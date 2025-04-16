@@ -9,6 +9,11 @@ It allows users to scramble the cube, solve any configuration, follow step-by-st
 
 ---
 
+## Short Demo
+[Watch the demo on YouTube](https://www.youtube.com/watch?v=mnSEGXDUn74&t=2s)
+
+---
+
 ## Features
 
 - Scramble the cube with real-time 3D animation
