@@ -43,7 +43,7 @@ Ok, basically you don’t have to do anything, just: 🔗 [Try it out](https://g
 
 > Notice: The backend services are hosted on Render’s free tier, which may cause a short delay — so be patient (after all, it's a free plan, you know...)
 
-Or, if you insist, install it locally:
+Or, if you insist on running it locally:
 
 1. Terminal: 
 
@@ -59,16 +59,22 @@ export const API_BASE_URL = "http://localhost:8000";     // FastAPI backend
 export const API_BASE_AI_URL = "http://localhost:8003";  // Gemini AI service
 ```
 
-3. Create a `.env` file inside the `cube-ai-agent` directory and add your Gemini API key:
+3. Create a `.env` file inside the `backend` directory and paste:
 
-```plaintext 
+ ```python
+MONGO_URI=mongodb+srv://readonly_user:readonly123@cluster0.hlrp9cg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+```
+
+4. Create a `.env` file inside the `cube-ai-agent` directory and add your Gemini API key:
+
+```python 
 GEMINI_API_KEY="your-api-key-here"
 ```
 
 > You can get a Gemini API key by enabling the Generative Language API
 at [Google AI Studio](https://aistudio.google.com/apikey) and creating a project in **Google Cloud Console**.
 
-4. Start the project:
+5. Start the project:
 
 ```bash
 docker-compose up --build
