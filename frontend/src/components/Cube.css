@@ -30,7 +30,7 @@
 }
 
 /* Prevent text selection on buttons and headers for cleaner UX */
-button, h1, .message, .fun-fact-message {
+button, h1, .message, .fun-fact-message, .spinner-overlay {
   user-select: none;    
 }
 

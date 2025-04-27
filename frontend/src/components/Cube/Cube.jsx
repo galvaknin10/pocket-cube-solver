@@ -10,7 +10,8 @@ import UnfoldedCube from "../UnfoldedCube";
 import { scrambleCube, flattenCubeStateByPosition, reorientCubeFromString } from "./CubeUtils";
 import rotateLayerCubies from "./CubeTransformer";
 import {handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave,} from "./CubeLogic";
-import { API_BASE_URL, API_BASE_AI_URL } from '../config';
+import { API_BASE_URL, API_BASE_AI_URL } from '../../config';       
+
 
 
 // Default solved state of the cube (used for initial load and reset)
@@ -83,7 +84,9 @@ const Cube = () => {
     const [guideMode, setGuideMode] = useState(false);
     const [isScrambling, setIsScrambling] = useState(false);
     const [manualColorMode, setManualColorMode] = useState(false);
-    const [isSolving, setIsSolving] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);  // for the spinner
+    const [isLocked,  setIsLocked]  = useState(false);  // for the overlay
+    
 
 
     /**
@@ -116,7 +119,8 @@ const Cube = () => {
      */
     const handleFindSolution = async () => {
         const cubeString = flattenCubeStateByPosition(cubeState);
-        setIsSolving(true); // Start loading
+        setIsLoading(true);
+        setIsLocked(true);
     
         try {
         // Step 1: Check if current cube state (or its symmetrical variant) exists in DB
@@ -167,7 +171,7 @@ const Cube = () => {
         } catch (err) {
         console.error("Error finding or solving:", err);
         } finally {
-          setIsSolving(false); // Stop loading
+          setIsLoading(false)
         }
     };
 
@@ -221,16 +225,18 @@ const Cube = () => {
      * Starts the guided solving process step-by-step.
      */
     const handleGuideMe = () => {
-        if (!solutionSteps || solutionSteps.length === 0) {
-        showNoSolutionMessage("No solution steps. Click 'Find Solution' first.");
-        return;
-        }
-        // Start from the first move
-        setGuideMode(true);
-        setCurrentStepIndex(0);
-        showManualStep(0);
+      setIsLocked(false); // Stop loading
 
-        showGuidingArrowsMessage("Follow the guiding arrows to proceed!");
+      if (!solutionSteps || solutionSteps.length === 0) {
+      showNoSolutionMessage("No solution steps. Click 'Find Solution' first.");
+      return;
+      }
+      // Start from the first move
+      setGuideMode(true);
+      setCurrentStepIndex(0);
+      showManualStep(0);
+
+      showGuidingArrowsMessage("Follow the guiding arrows to proceed!");
     };
 
     /**
@@ -327,6 +333,8 @@ const Cube = () => {
     const solvedCubeString = "BBBBGGGGOOOORRRRWWWWYYYY";
     reorientCubeFromString(solvedCubeString, setCubeState);
     setCubeState(initialCubeState);
+    setIsLocked(false)
+    setIsLoading(false)
     setSolutionSteps([]);
     setIsScrambling(false);
     setCurrentStepIndex(0);
@@ -462,7 +470,7 @@ useEffect(() => {
     // Includes buttons, 3D cube or manual color grid, and user interaction handlers.
     return (
       <div>
-        {isSolving && (
+        {isLoading && (
           <div className="spinner-overlay">
             <div className="spinner"></div>
             <p className="spinner-text">Hang tight! We're solving your cube — meanwhile, why not check a Gemini Insight?</p>
@@ -472,11 +480,11 @@ useEffect(() => {
     
         {/* --- BUTTONS PANEL --- */}
         <div className="button-container">
-          <button className="scramble" onClick={handleScramble} disabled={isScrambling || guideMode || isSolving}>Scramble</button>
-          <button className="find-solution" onClick={handleFindSolution} disabled={guideMode > 0 || isScrambling || isSolving}>Solve</button>
-          <button className="guide-me" onClick={handleGuideMe} disabled={guideMode || isScrambling || isSolving}>Guide Me</button>
-          <button className="reset" onClick={handleReset} disabled={cubeState === initialCubeState || isScrambling || isSolving}>Reset</button>
-          <button className="manual-color" onClick={() => setManualColorMode((prev) => !prev)} disabled={guideMode || isSolving}>
+          <button className="scramble" onClick={handleScramble} disabled={isScrambling || guideMode || isLoading || isLocked}>Scramble</button>
+          <button className="find-solution" onClick={handleFindSolution} disabled={guideMode || isScrambling || isLocked || isLoading}>Solve</button>
+          <button className="guide-me" onClick={handleGuideMe} disabled={guideMode || isScrambling || isLoading}>Guide Me</button>
+          <button className="reset" onClick={handleReset} disabled={cubeState === initialCubeState || isScrambling || isLoading}>Reset</button>
+          <button className="manual-color" onClick={() => setManualColorMode((prev) => !prev)} disabled={guideMode || isLoading || isLocked}>
             {manualColorMode ? "Back to 3D Cube" : "Manual Color Pick"}
           </button>
           <button className="fun-fact" onClick={handleFunFact}>Gemini Insight 🔮</button>
@@ -520,7 +528,7 @@ useEffect(() => {
             onMouseUp={() => handleMouseUp(setIsDragging, setSelectedLayer)}
             onMouseLeave={() => handleMouseLeave(setIsDragging, setSelectedLayer)}
           >
-            {isSolving && <div className="cube-lock-overlay"></div>}
+            {(isLoading ||isLocked || isScrambling) && <div className="cube-lock-overlay"></div>}
             <div
               className="cube"
               draggable="false"
