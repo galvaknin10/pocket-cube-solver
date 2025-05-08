@@ -375,7 +375,7 @@ const Cube = () => {
             showErrorMessage("Backend Error: " + data.error);
           }
         } else {
-          showErrorMessage("Unexpected response from Backend.");
+          showNoticeMessage("🤫 Shh… Gemini’s sleeping 💤—click again in a sec! ⏱️");
         }
       } catch (err) {
         showErrorMessage("Failed to fetch fun fact.");
