@@ -2,11 +2,8 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Retrieve MongoDB URI from environment for security
-MONGO_URI = os.getenv("MONGO_URI")
+# Readonly DB access
+MONGO_URI = "mongodb+srv://readonly_user:readonly123@cluster0.hlrp9cg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Define database and collection names
 DB_NAME = "pocket_cube_db"

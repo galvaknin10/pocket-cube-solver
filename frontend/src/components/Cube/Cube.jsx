@@ -10,7 +10,7 @@ import UnfoldedCube from "../UnfoldedCube";
 import { scrambleCube, flattenCubeStateByPosition, reorientCubeFromString } from "./CubeUtils";
 import rotateLayerCubies from "./CubeTransformer";
 import {handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave,} from "./CubeLogic";
-import { API_BASE_URL, API_BASE_AI_URL } from '../../config';       
+import { API_BASE_BACKEND_URL } from '../../config';       
 
 
 
@@ -124,7 +124,7 @@ const Cube = () => {
     
         try {
         // Step 1: Check if current cube state (or its symmetrical variant) exists in DB
-        const symmetryRes = await fetch(`${API_BASE_URL}/find_symmetry`, {
+        const symmetryRes = await fetch(`${API_BASE_BACKEND_URL}/find_symmetry`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ cube_data: cubeString }),
@@ -143,12 +143,17 @@ const Cube = () => {
         // Step 2: If symmetry found, update cube orientation
         if (symmetryData.state !== cubeString) {
             reorientCubeFromString(symmetryData.state, setCubeState);
-            showNoticeMessage("Solution found! Notice: Cube has been switched to an identical symmetric state. Feel free to adapt your cube to this new orientation and when ready click on Guide Me.");
+            showNoticeMessage(
+              `Solution found! Notice: Cube has been switched to an identical symmetric state. 
+               Feel free to adapt your cube to this new orientation and when ready, 
+               click on <span style="font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;">GUIDE ME</span>.`
+            );
+            
             noticeMessage = true;
         }
     
         // Step 3: Request the solution path from the backend
-        const solveRes = await fetch(`${API_BASE_URL}/solve`, {
+        const solveRes = await fetch(`${API_BASE_BACKEND_URL}/solve`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ cube_data: symmetryData.state }),
@@ -161,9 +166,10 @@ const Cube = () => {
         if (solveData.solution[0] === "Congratulations!") {
             showCubeAlreadySolvedMessage("Cube is already in its solved state, nothing to do...");
             setSolutionSteps([]);
+            setIsLocked(false);
             return;
         } else if (!noticeMessage) {
-            showSolutionFoundMessage("Solution found! Click On Guide Me.");
+            showSolutionFoundMessage(`Solution found! click on <span style="font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;">GUIDE ME</span>.`);
         }
     
         setSolutionSteps(solveData.solution); // Update state with solution path
@@ -196,7 +202,7 @@ const Cube = () => {
         messageBox.classList.add("message", messageType);
       }
     
-      messageBox.innerText = message.toUpperCase();
+      messageBox.innerHTML = message.toUpperCase();
       document.body.appendChild(messageBox);
     
       // Remove all messages after their specific duration
@@ -217,7 +223,12 @@ const Cube = () => {
     const showGuidingArrowsMessage = (message) => showMessage(message, "guiding-arrows-message", 4000);
     const showRestartCubeMessage = (message) => showMessage(message, "restart-cube-message", 4000);
     const showScrambleMessage = (message) => showMessage(message, "scramble-cube-message", 7000);
-    const showFunFactMessage = (message) => showMessage(message, "fun-fact-message", 20000);
+    const showFunFactMessage = (message) => {
+      // Remove any existing fun-fact message first
+      document.querySelectorAll('.fun-fact-message').forEach(msg => msg.remove());
+    
+      showMessage(message, "fun-fact-message", 20000);
+    };
 
 
     /**
@@ -348,29 +359,32 @@ const Cube = () => {
   };
 
 
+
+  
     const handleFunFact = async () => {
-    try {
-      const res = await fetch(`${API_BASE_AI_URL}/fun-fact`);
-      const data = await res.json();
-  
-      if (data.fact) {
-        showFunFactMessage(data.fact);
-      } else if (data.error) {
-        // Check if it's a quota issue
-        if (data.error.includes("quota") || data.error.includes("exceeded")) {
-          showNoticeMessage("The AI is getting a little overwhelmed. Try again later!");
+      try {
+        const res = await fetch(`${API_BASE_BACKEND_URL}/fun-fact`);
+        const data = await res.json();
+    
+        if (data.fact) {
+          showFunFactMessage(data.fact);
+        } else if (data.error) {
+          if (data.error.includes("quota") || data.error.includes("exceeded")) {
+            showNoticeMessage("The AI is getting a little overwhelmed. Try again later!");
+          } else {
+            showErrorMessage("Backend Error: " + data.error);
+          }
         } else {
-          showErrorMessage("Gemini AI Error: " + data.error);
+          showErrorMessage("Unexpected response from Backend.");
         }
-      } else {
-        showErrorMessage("Unexpected response from AI.");
+      } catch (err) {
+        showErrorMessage("Failed to fetch fun fact.");
+        console.error(err);
       }
-    } catch (err) {
-      showErrorMessage("Failed to fetch fun fact.");
-      console.error(err);
-    }
     };
-  
+    
+
+
 
     // Renders all cubies (each small cube) in the cubeState
     const renderCubies = () =>

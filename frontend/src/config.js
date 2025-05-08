@@ -1,4 +1,7 @@
-export const API_BASE_URL = "https://pocket-cube-backend-service.onrender.com";
-export const API_BASE_AI_URL = "https://pocket-cube-solver-ai-service.onrender.com";
+// Base URL for backend API calls.
+// Uses the REACT_APP_BACKEND_URL env var if defined (set at build time),
+// otherwise defaults to localhost for local development.
+export const API_BASE_BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+
 
 

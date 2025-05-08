@@ -7,3 +7,4 @@ gdown
 pytest
 pymongo
 python-dotenv
+httpx

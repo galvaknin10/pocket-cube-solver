@@ -1,3 +1,6 @@
+import httpx
+import os
+
 # routes.py — Defines API endpoints for cube operations
 
 from fastapi import APIRouter
@@ -39,3 +42,18 @@ def solve(state: CubeState):
     """
 
     return solve_cube(state.cube_data)
+
+
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://cube-ai-agent:8000")
+
+@router.get("/fun-fact")
+async def get_fun_fact():
+    """
+    Proxy route to fetch a fun fact from the cube-ai-agent.
+    """
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.get(f"{AI_SERVICE_URL}/fun-fact")
+            return res.json()
+    except Exception as e:
+        return {"error": f"Backend failed to fetch fun fact: {str(e)}"}
