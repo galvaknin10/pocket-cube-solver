@@ -372,10 +372,10 @@ const Cube = () => {
           if (data.error.includes("quota") || data.error.includes("exceeded")) {
             showNoticeMessage("The AI is getting a little overwhelmed. Try again later!");
           } else {
-            showErrorMessage("Backend Error: " + data.error);
+            showNoticeMessage("🤫 Shh… Gemini’s sleeping 💤—click again in a sec! ⏱️");
           }
         } else {
-          showNoticeMessage("🤫 Shh… Gemini’s sleeping 💤—click again in a sec! ⏱️");
+          showErrorMessage("Unexpected response from Backend.");
         }
       } catch (err) {
         showErrorMessage("Failed to fetch fun fact.");
