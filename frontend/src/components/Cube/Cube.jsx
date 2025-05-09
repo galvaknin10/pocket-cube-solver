@@ -239,8 +239,8 @@ const Cube = () => {
       setIsLocked(false); // Stop loading
 
       if (!solutionSteps || solutionSteps.length === 0) {
-      showNoSolutionMessage("No solution steps. Click 'Find Solution' first.");
-      return;
+        showNoSolutionMessage("No solution steps. Click <span style=\"font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;\">SOLVE</span> first.");
+        return;
       }
       // Start from the first move
       setGuideMode(true);
