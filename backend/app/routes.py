@@ -3,10 +3,12 @@ import os
 
 # routes.py — Defines API endpoints for cube operations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.models import CubeState  # Pydantic model for validating input
 from app.services.solve import solve_cube  # Core logic to solve a cube
 from app.services.symmetry import find_symmetric_state  # Handles symmetry detection
+import asyncio
+from fastapi import HTTPException
 
 
 # Create a new API router instance
@@ -46,14 +48,24 @@ def solve(state: CubeState):
 
 AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://cube-ai-agent:8000")
 
+
 @router.get("/fun-fact")
 async def get_fun_fact():
-    """
-    Proxy route to fetch a fun fact from the cube-ai-agent.
-    """
-    try:
-        async with httpx.AsyncClient() as client:
-            res = await client.get(f"{AI_SERVICE_URL}/fun-fact")
-            return res.json()
-    except Exception as e:
-        return {"error": f"Backend failed to fetch fun fact: {str(e)}"}
+    async with httpx.AsyncClient(timeout=15) as client:
+        # Warm-up ping (call / first)
+        try:
+            await client.get(f"{AI_SERVICE_URL}/")
+        except httpx.RequestError:
+            pass  # ignore warm-up errors
+
+        # Then try the actual /fun-fact 3 times
+        for _ in range(3):
+            try:
+                res = await client.get(f"{AI_SERVICE_URL}/fun-fact")
+                if res.status_code == 200 and res.content:
+                    return res.json()
+            except httpx.RequestError:
+                pass
+            await asyncio.sleep(1)
+
+    raise HTTPException(503, "AI service unavailable—please try again in a moment")
