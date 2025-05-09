@@ -51,24 +51,20 @@ AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://cube-ai-agent:8000")
 
 @router.get("/fun-fact")
 async def get_fun_fact():
+    """
+    Endpoint to fetch a fun fact from the cube-ai-agent (Gemini API).
+
+    Flow:
+    - Sends a GET request to the cube-ai service's /fun-fact endpoint
+    - Waits up to 60 seconds for a response
+    - Returns the fun fact as JSON if successful
+    - Returns 503 if the service is unavailable or still waking up
+    """
+
     async with httpx.AsyncClient(timeout=60) as client:
-        # 1) poke the root ping to wake up the service
-        try:
-            await client.get(f"{AI_SERVICE_URL}/")
-        except httpx.RequestError:
-            pass
+        res = await client.get(f"{AI_SERVICE_URL}/fun-fact")
+        if res.status_code == 200 and res.content:
+            print(res)
+            return res.json()
 
-        # 2) wait a bit for Render to start the container
-        await asyncio.sleep(10)    # <-- give it 10 s
-
-        # 3) now try /fun-fact, with a couple retries
-        for _ in range(5):
-            try:
-                res = await client.get(f"{AI_SERVICE_URL}/fun-fact")
-                if res.status_code == 200 and res.content:
-                    return res.json()
-            except httpx.RequestError:
-                pass
-            await asyncio.sleep(5)  # <-- retry every 5 s
-
-    raise HTTPException(503, "🤖 Gemini’s still waking—please try again in a moment")
+    raise HTTPException(503, "Gemini’s still waking—please try again shortly...")

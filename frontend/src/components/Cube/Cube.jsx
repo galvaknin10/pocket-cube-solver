@@ -361,7 +361,18 @@ const Cube = () => {
 
 
   
+    // A helper that fires the wake-up call.
+    // Reason: Render only auto-wakes a sleeping service when it's hit from an external/public request.
+    // Internal calls (like backend → cube-ai) won't trigger the wake-up, so we use the frontend to ping it directly.
+    function wakeCubeAI() {
+      fetch("https://pocket-cube-solver-ai-service.onrender.com/")
+        .catch(() => { /* ignore any network errors */ }); 
+    }
+  
     const handleFunFact = async () => {
+      // kick off the wake-up ping
+      wakeCubeAI();
+
       try {
         const res = await fetch(`${API_BASE_BACKEND_URL}/fun-fact`);
         const data = await res.json();
@@ -372,16 +383,17 @@ const Cube = () => {
           if (data.error.includes("quota") || data.error.includes("exceeded")) {
             showNoticeMessage("The AI is getting a little overwhelmed. Try again later!");
           } else {
-            showNoticeMessage("🤫 Shh… Gemini’s sleeping 💤—click again in a sec! ⏱️");
+            showErrorMessage("Unexpected response from Backend.");
           }
         } else {
-          showErrorMessage("Unexpected response from Backend.");
+          showNoticeMessage("🤫 Shh… Gemini’s sleeping 💤—click again in a sec! ⏱️");
         }
       } catch (err) {
         showErrorMessage("Failed to fetch fun fact.");
         console.error(err);
       }
     };
+
     
 
 
