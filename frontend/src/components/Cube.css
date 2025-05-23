@@ -84,44 +84,83 @@ button, h1, .message, .fun-fact-message, .spinner-overlay {
   }
 }
 
-/* Base styles for all messages */
 .message {
   position: fixed;
-  top: 85%;
+  bottom: 4%;             /* Use bottom for more consistent spacing */
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 25px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 16px 32px;
+  border-radius: 16px;
+  font-size: 1.08rem;
+  font-weight: 600;
   text-align: center;
   z-index: 9999;
-  max-width: 80%;
-  opacity: 0.9;
-  transition: opacity 0.3s ease;
+  max-width: 90vw;
   width: auto;
-  background-color: #8b848c; 
-  color: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0.96;
+  transition: opacity 0.3s, box-shadow 0.2s, transform 0.2s;
+
+  background: linear-gradient(105deg, #5e81ac 60%, #c0cbe6 100%);
+  color: #fff;
+  box-shadow:
+    0 8px 24px rgba(44, 62, 80, 0.12),
+    0 0 10px 2px #63a4ff44;
+  border: 2px solid #77aaff;
+  letter-spacing: 0.02em;
+}
+
+.message:hover {
+  opacity: 1;
+  box-shadow:
+    0 16px 36px rgba(44, 62, 80, 0.20),
+    0 0 18px 4px #82b3fa99;
+  transform: translateX(-50%) scale(1.03);
 }
 
 .fun-fact-message {
   position: fixed;
   top: 60%;
-  left: 72%;
-  transform: translateY(-50%);
+  left: 78%; /* move more to the right (was 72%) */
+  transform: translate(-50%, -50%);
 
-  background-color: #ffeaa7;
-  color: #2d3436;
-  font-size: 18px;
-  padding: 16px 20px;
-  border-radius: 12px;
-  font-family: 'Courier New', monospace;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-  max-width: 300px;
+  background: linear-gradient(135deg, #dbeafe 0%, #fffbea 80%);
+  color: #273c75;
+  font-size: 1 rem;
+  line-height: 1;
+  padding: 20px 28px;
+  border-radius: 16px;
+  font-family: 'Fira Mono', 'Courier New', monospace;
+  box-shadow:
+    0 8px 24px rgba(44, 62, 80, 0.16),         /* normal shadow */
+    0 0 16px 4px #63a4ff66,                    /* blue glow, outer */
+    0 0 0 4px #8ecae633;                       /* soft frame glow */
+  border: 2.5px solid #69a2ff;
+  max-width: 340px;
+  min-width: 220px;
+  word-break: break-word;
   z-index: 9999;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
+
+.fun-fact-message:hover {
+  box-shadow:
+    0 12px 32px rgba(44, 62, 80, 0.24),
+    0 0 28px 8px #63a4ffbb,
+    0 0 0 6px #8ecae644;
+  transform: translate(-50%, -54%) scale(1.04);
+}
+
+.fun-fact-message::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 24px;
+  top: -18px;
+  width: 36px;
+  height: 36px;
+  background: url(../assets/gemini-color.svg) no-repeat center center / contain;
+}
+
 
 
 
@@ -139,34 +178,52 @@ button, h1, .message, .fun-fact-message, .spinner-overlay {
   padding: 0 10px; 
 }
 
-/* Base styles for all buttons */
 button {
-  padding: 0.75rem 3rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
+  padding: 0.65rem 2.6rem;
+  font-size: 1.09rem;
+  font-family: 'SF Pro Display', 'Segoe UI', 'Roboto', Arial, sans-serif;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1.5px solid #dde6f3;
+  background: linear-gradient(180deg, #f7fafd 0%, #c3d3ee 100%);
+  color: #1c2541;
+  box-shadow:
+    0 1.5px 6px 0 #b5c5e0aa,
+    0 0.5px 1.5px #fff6 inset;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  color: #fff;
-  white-space: nowrap; 
-  background-color: #1f1f1e;
+  letter-spacing: 0.03em;
+  transition:
+    background 0.16s,
+    color 0.16s,
+    border-color 0.18s,
+    box-shadow 0.17s,
+    transform 0.13s;
+  outline: none;
+  white-space: nowrap;
+  user-select: none;
 }
 
-/*hover effect*/
-button:hover{
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  background-color: #0c109e;
+button:hover {
+  background: linear-gradient(180deg, #e7f0fc 0%, #b2c8e9 100%);
+  border-color: #aac8ef;
+  color: #1251b4;
+  box-shadow:
+    0 6px 24px 0 #b5c5e0cc,
+    0 0.5px 2.5px #fff9 inset;
+  transform: translateY(-2px) scale(1.03);
 }
 
-/* Active state for button press feedback */
 button:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(180deg, #c3d3ee 0%, #e7f0fc 100%);
+  border-color: #80a3c7;
+  color: #0d3577;
+  box-shadow:
+    0 2px 8px 0 #b5c5e066,
+    0 0.5px 1.5px #fff7 inset;
+  transform: translateY(0) scale(0.99);
 }
+
 
 /* Styles the 2D unfolded cube layout (for manual color editing) */
 .unfolded-cube {
