@@ -10,7 +10,10 @@ import UnfoldedCube from "../UnfoldedCube";
 import { scrambleCube, flattenCubeStateByPosition, reorientCubeFromString } from "./CubeUtils";
 import rotateLayerCubies from "./CubeTransformer";
 import {handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave,} from "./CubeLogic";
-import { API_BASE_BACKEND_URL } from '../../config';       
+import { API_BASE_BACKEND_URL } from '../../config';  
+import geminiLogo from '../../assets/gemini-color.svg';
+
+
 
 
 
@@ -146,7 +149,7 @@ const Cube = () => {
             showNoticeMessage(
               `Solution found! Notice: Cube has been switched to an identical symmetric state. 
                Feel free to adapt your cube to this new orientation and when ready, 
-               click on <span style="font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;">GUIDE ME</span>.`
+               click on <span style="font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;">Guide Me</span>.`
             );
             
             noticeMessage = true;
@@ -169,7 +172,7 @@ const Cube = () => {
             setIsLocked(false);
             return;
         } else if (!noticeMessage) {
-            showSolutionFoundMessage(`Solution found! click on <span style="font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;">GUIDE ME</span>.`);
+            showSolutionFoundMessage(`Solution found! click on <span style="font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;">Guide Me</span>.`);
         }
     
         setSolutionSteps(solveData.solution); // Update state with solution path
@@ -239,7 +242,7 @@ const Cube = () => {
       setIsLocked(false); // Stop loading
 
       if (!solutionSteps || solutionSteps.length === 0) {
-        showNoSolutionMessage("No solution steps. Click <span style=\"font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;\">SOLVE</span> first.");
+        showNoSolutionMessage("No solution steps. Click <span style=\"font-family: 'Courier New', cursive; font-weight: 900; font-size: 1.2em; color: #ff5722; text-shadow: 1px 1px 2px #000;\">Solve</span> first.");
         return;
       }
       // Start from the first move
@@ -513,7 +516,14 @@ useEffect(() => {
           <button className="manual-color" onClick={() => setManualColorMode((prev) => !prev)} disabled={guideMode || isLoading || isLocked}>
             {manualColorMode ? "Back to 3D Cube" : "Manual Color Pick"}
           </button>
-          <button className="fun-fact" onClick={handleFunFact}>Gemini Insight 🔮</button>
+          <button className="fun-fact" onClick={handleFunFact}>
+          Gemini Insight&nbsp;
+          <img
+            src={geminiLogo}
+            alt="Gemini Logo"
+            style={{ width: 22, height: 22, verticalAlign: "middle" }}
+          />
+        </button>
         </div>
     
         {/* --- CUBE VIEW --- */}
