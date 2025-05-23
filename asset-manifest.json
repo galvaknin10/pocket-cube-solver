@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/pocket-cube-solver/static/css/main.9ff24f1e.css",
+    "main.js": "/pocket-cube-solver/static/js/main.b68a7732.js",
+    "static/js/453.8ab44547.chunk.js": "/pocket-cube-solver/static/js/453.8ab44547.chunk.js",
+    "index.html": "/pocket-cube-solver/index.html",
+    "static/media/gemini-color.svg": "/pocket-cube-solver/static/media/gemini-color.fd38b15d3da42db4a7f54e78445c4052.svg",
+    "main.9ff24f1e.css.map": "/pocket-cube-solver/static/css/main.9ff24f1e.css.map",
+    "main.b68a7732.js.map": "/pocket-cube-solver/static/js/main.b68a7732.js.map",
+    "453.8ab44547.chunk.js.map": "/pocket-cube-solver/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9ff24f1e.css",
+    "static/js/main.b68a7732.js"
+  ]
+}
