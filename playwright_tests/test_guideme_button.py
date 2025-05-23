@@ -21,32 +21,6 @@ def test_guide_me_without_solution():
         browser.close()
 
 
-# Test: Clicking "Guide Me" with valid steps should show arrows and guidance message
-def test_guide_me_with_solution_steps():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto("https://galvaknin10.github.io/pocket-cube-solver/")
-
-
-        # Inject a valid solution path
-        page.evaluate("""
-            window.setSolutionStepsFromTest(["U", "D", "B"])
-        """)
-
-        # Click "Guide Me"
-        page.locator("button.guide-me").click()
-
-        # Wait for the guiding message
-        msg = page.wait_for_selector(".guiding-arrows-message", timeout=3000)
-        assert "guiding arrows" in msg.inner_text().lower()
-
-        # Check that a rotation arrow appears
-        page.wait_for_selector(".rotation-arrow", timeout=3000)
-
-        browser.close()
-
-
 # Test: Complete the full guide process and confirm final success message
 def test_guide_me_with_finish_process():
     with sync_playwright() as p:

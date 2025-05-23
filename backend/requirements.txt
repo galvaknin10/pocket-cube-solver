@@ -8,3 +8,4 @@ pytest
 pymongo
 python-dotenv
 httpx
+mongomock

@@ -1,0 +1,26 @@
+# Base image
+FROM node:16-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+# Add homepage arg
+ARG HOMEPAGE
+ENV HOMEPAGE=$HOMEPAGE
+
+RUN npm install
+COPY . .
+
+# Dynamically overwrite homepage
+RUN node -e "let p=require('./package.json'); p.homepage=process.env.HOMEPAGE || ''; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2));"
+
+RUN npm run build
+
+# Serve with nginx
+FROM nginx:alpine
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
