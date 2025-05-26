@@ -1,7 +1,7 @@
 # Pocket Cube Solver 
 
 <p align="center">
-  <img src="pocket-cube.png" alt="Pocket Cube" width="200"/>
+  <img src="docs/pocket-cube.png" alt="Pocket Cube" width="200"/>
 </p>
 
 An interactive and intuitive 2x2x2 cube simulation web app.
@@ -33,7 +33,7 @@ Automated testing is handled using **Pytest** for backend/unit tests and **Playw
 
 ## Architecture
 
-![Architecture](./REACT.png)
+![Architecture](docs/Architecture.png)
 
 ---
 
@@ -74,12 +74,12 @@ You’re all set - Go to `http://localhost:3000` to start messing with the cube.
 ## Project Structure
 
 ```plaintext
-.
 ├── backend/             # FastAPI backend microservice
 ├── cube-ai-agent/       # Gemini AI microservice
 ├── frontend/            # React microservice
 ├── playwright_tests/    # E2E tests (Playwright)
-└── docker-compose.yml   # Docker Compose setup
+├── docs/                # Project documentation 
+├── docker-compose.yml   # Docker Compose setup
 ```
 
 ---
